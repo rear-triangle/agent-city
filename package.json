@@ -1,0 +1,16 @@
+{
+  "name": "agent-town-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prototype": "vite --host 0.0.0.0 --port 5173",
+    "dev": "npm run prototype",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 5173"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "vite": "8.3.4"
+  }
+}

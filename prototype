@@ -1,0 +1,10 @@
+#!/bin/sh
+# Use this Mac's native Node rather than its obsolete Intel installation.
+set -eu
+cd "$(dirname "$0")"
+if [ -x /opt/homebrew/bin/node ]; then
+  task_node=/opt/homebrew/bin/node
+else
+  task_node=$(command -v node)
+fi
+exec "$task_node" node_modules/vite/bin/vite.js --host 0.0.0.0 --port 5173 "$@"
