@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 7 adds persistent Chief visibility, click-to-teleport travel, compact house menus, and Solo Leveling resident names with Igris as mayor. Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 8 adds grab-based map panning, orbit tilt, and a collapsed navigation guide. Revision 7 adds persistent Chief visibility, click-to-teleport travel, compact house menus, and Solo Leveling resident names with Igris as mayor. Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 7 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 8 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -40,6 +40,26 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M4 native workflow | Not started. Browser composition is not a native overlay. |
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
+
+## Revision 8 camera checks
+
+Normal dragging pans across the ground plane. The point under the initial grab remains under the cursor through the gesture, using the active camera orientation and zoom. Right-drag and Option/Alt-drag orbit horizontally and tilt vertically. The Move map guide exposes a selectable left-drag Orbit mode for trackpads and touchscreens. Scroll and existing controls zoom; Reset view restores the default position, angle, tilt, and zoom.
+
+A five-pixel drag threshold keeps short clicks available for Chief teleport and house selection. Camera dragging releases resident follow without closing the cutaway. Pointer cancellation and lost capture end the gesture. Theme changes and route-marking changes retain the current camera position; entering another town resets the view.
+
+| Check | Observed outcome |
+| --- | --- |
+| Grab alignment | Browser pointer-event replay moved a projected house by 120 × 40 pixels for a 120 × 40 pixel pan, within floating-point precision. Yaw stayed unchanged. |
+| Pan after orbit | A subsequent -90 × 65 pixel pan at a changed yaw and tilt produced the same projected displacement. |
+| Zoomed pan | At 120% zoom, an 85 × -45 pixel drag produced the matching screen displacement. |
+| Orbit | Right-button and Alt-modified replay changed yaw and elevation. Selecting Orbit in the guide also changed ordinary left-drag behavior and updated the hint. |
+| Tilt bounds | Large vertical gestures stopped at 0.35 and 1.25 radians above the ground plane. |
+| No unintended travel | Pan, orbit, and cancelled drag left the Chief's world position unchanged and did not open an inspector. |
+| Camera continuity | Toggling route markings kept the panned target. Reset view restored target [0, 1.5, 0], yaw 0.67, default tilt, and 100% zoom. |
+| Narrow guide | At 390 × 844, mode buttons remained visible above the compact house menu. Help text scrolls inside the small guide and document width does not overflow. |
+| Build | TypeScript and Vite passed. The existing renderer-chunk warning remains. |
+
+These checks exercised the browser event handlers with synthetic pointer events; pointer capture was stubbed only during replay because synthetic events have no native active pointer. Normal browser clicks and guide buttons were also exercised. Physical mouse and trackpad feel remains subject to owner review. This is still a throwaway approval prototype, with no new runtime dependency or durable camera state.
 
 ## Revision 7 interaction checks
 
@@ -61,7 +81,7 @@ The Chief starts on the sanctuary terrace, remains rendered through building occ
 
 The named-shadow selection follows the owner's anime scope through Beru. The [official Season 2 shadow visuals](https://sololeveling-anime.net/special/shadows-visual/) provided the character roster reference; English aliases follow the owner's naming direction. Generic numbered names avoid extending beyond that scope. Roles and character models remain this prototype's representations.
 
-This revision adds no runtime library, model, image, or font. Current transfer sizes are approximately 684 kB JavaScript before compression, 183 kB compressed, 24 kB compressed CSS, and 92 kB bundled open fonts. Native resource gates remain pending. Earlier observations below describe the behavior of their respective revisions.
+This revision adds no runtime library, model, image, or font. Revision 7 transfer sizes were approximately 684 kB JavaScript before compression, 183 kB compressed, 24 kB compressed CSS, and 92 kB bundled open fonts. Native resource gates remain pending. Earlier observations below describe the behavior of their respective revisions.
 
 ## Revision 6 typography checks
 

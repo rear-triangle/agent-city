@@ -44,9 +44,20 @@ The launcher selects this Mac's native Homebrew Node. It avoids the older Intel 
 
 These controls preview responses to demand. They do not implement an autonomous provider scheduler or grant new execution permissions. Inactivity causes no decay penalty.
 
+## Navigate the city
+
+- Drag with the left mouse button to move across the map. The grabbed ground point follows your cursor at the current rotation and zoom.
+- Right-drag or hold Option/Alt while dragging to rotate and tilt. Vertical orbit is limited so the camera stays above the ground.
+- Scroll to zoom. The existing plus and minus controls also work.
+- A short click still teleports the Chief or opens a house menu. A drag changes only the camera.
+- Open **Move map** in the lower-left of the scene for the control guide. Select **Orbit** to rotate with a normal drag, including on touchscreens. Select **Move** to restore panning.
+- Use **Reset view** in that guide, or click the zoom percentage, to return to the default camera. **Look inside** still focuses a resident. Dragging releases that camera follow so you can inspect nearby rooms and streets.
+
+The selected drag mode and camera position are temporary prototype preferences. Quiet mode still accepts camera input. No animation loop was added for resting camera controls.
+
 ## Meet the Chief and residents
 
-1. The Chief starts outside the sanctuary and stays visible. Click any open part of the world to teleport there. Click a house to appear at its entrance and open its small menu. Dragging rotates the view.
+1. The Chief starts outside the sanctuary and stays visible. Click any open part of the world to teleport there. Click a house to appear at its entrance and open its small menu. Dragging moves the map with the point you grabbed.
 2. House menus show the resident's name, role, status, and current task. Choose **Look inside** to reveal the room and agent. **More details** opens memory, skills, history, equipment, and work controls. **Less detail** returns to the small menu.
 3. Open **Chief** beneath the city heading or use the **C** button. The small owner menu opens decisions, the sanctuary cutaway, and teleport home. **More controls** or **Open Player menu** expands the owner controls.
 4. The larger sanctuary stands on a separate terrace with a letterbox and arrival waystone. It has no city road connection. **Teleport home** returns the Chief to its terrace. Owner travel works while city work is paused or Quiet mode is active.

@@ -34,7 +34,7 @@ export const state = {
  panel:null as 'chief'|'resident'|'approvals'|'activity'|'goal'|'road'|'settings'|'outcomes'|'towns'|null,
  tab:'Work', detailsExpanded:false, paused:false, approval:'pending' as 'pending'|'allowed'|'denied'|'none',
  phase:'working' as 'working'|'review'|'accepted'|'idle',
- accepted:2, stage:0, zoom:1, roads:true,
+ accepted:2, stage:0, zoom:1, roads:true, cameraMode:'pan' as 'pan'|'orbit',
  revision:1, goal:'Choose the right event transport',
  tasks:[] as {id:string; title:string; resident:string; status:string}[],
  toast:'', replay:0, loadoutSlot:'tool' as 'tool'|'attire', peek:null as string|null, chatter:true, courierSerial:0,
