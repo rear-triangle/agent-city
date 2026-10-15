@@ -1,4 +1,4 @@
-import { chief, type Resident } from './state';
+import type { Resident } from './state';
 export type Point=[number,number];
 export interface GeneratedRoad { resident:string; points:Point[]; cells:number }
 const step=.4, extent=11, n=Math.round(extent*2/step)+1;
@@ -9,9 +9,9 @@ export function door(r:Resident):Point{return [r.x,r.z+r.depth/2+.65];}
 /** Geometry is generated from footprints. This does not create communication permission. */
 export function generateRoads(people:Resident[],stage=0):GeneratedRoad[]{
  const blocked=new Set<string>(),used=new Set<string>();
- for(const r of [...people,chief])for(let ix=0;ix<n;ix++)for(let iz=0;iz<n;iz++){const [x,z]=world([ix,iz]);if((Math.abs(x-r.x)<r.width/2+.3&&Math.abs(z-r.z)<r.depth/2+.28)||(stage>0&&r.id!=='chief'&&Math.abs(x-(r.x-r.width/2-.5))<.7&&Math.abs(z-(r.z-.2))<.9))blocked.add(key([ix,iz]));}
+ for(const r of people)for(let ix=0;ix<n;ix++)for(let iz=0;iz<n;iz++){const [x,z]=world([ix,iz]);if((Math.abs(x-r.x)<r.width/2+.3&&Math.abs(z-r.z)<r.depth/2+.28)||(stage>0&&Math.abs(x-(r.x-r.width/2-.5))<.7&&Math.abs(z-(r.z-.2))<.9))blocked.add(key([ix,iz]));}
  const hub=cell([0,1.75]);
- return [...people,chief].filter(r=>r.id!=='mayor').map(r=>{
+ return people.filter(r=>r.id!=='mayor').map(r=>{
   const start=cell(door(r)),end=hub,open:Point[]=[start],cost=new Map([[key(start),0]]),prev=new Map<string,Point>(),closed=new Set<string>();
   let found=false;
   while(open.length){open.sort((a,b)=>(cost.get(key(a))!+Math.abs(a[0]-end[0])+Math.abs(a[1]-end[1]))-(cost.get(key(b))!+Math.abs(b[0]-end[0])+Math.abs(b[1]-end[1])));const cur=open.shift()!,ck=key(cur);if(closed.has(ck))continue;if(ck===key(end)){found=true;break;}closed.add(ck);

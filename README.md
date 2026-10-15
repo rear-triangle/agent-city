@@ -46,15 +46,25 @@ These controls preview responses to demand. They do not implement an autonomous 
 
 ## Meet the Chief and residents
 
-1. Open **Chief** beneath the city heading or use the **C** button on the left rail. Your home has a letterbox, a travel beacon, and a distinct white-coated character.
+1. Open **Chief** beneath the city heading or use the **C** button on the left rail. Your larger sanctuary stands on a separate terrace, with a letterbox, arrival waystone, and a distinct white-coated character. It has no city road connection.
 2. Open requests from the letterbox, give the mayor a goal, or manage towns and capacity.
 3. Choose **Look inside headquarters**. The outer building hides to reveal your character and desk. **Close cutaway** restores the building.
-4. Choose a resident under **Your home & visits**, or open a resident and select **Visit as Chief**. Your character follows the generated access roads. Pause holds a visit in place. Return home sends the Chief back inside.
+4. Choose a resident under **Your home & visits**, or open a resident and select **Teleport as Chief**. Your character appears at that home immediately. **Teleport home** returns the Chief inside the sanctuary. Owner travel also works while city work is paused.
 5. Residents normally work or rest indoors. Select Sage and choose **Look inside Sage's home** to see the reading workspace. Nyx makes one sample trip to the mayor hub and returns, rather than pacing indefinitely.
 6. From the Chief panel, choose **Send a demo courier**. A small robot carries a source index from Nyx to Sage through the mayor hub. **Activity** records its progress and delivery. Replanning or switching themes interrupts a visible delivery in this throwaway scene.
 7. Occasional speech bubbles describe an activity or a character quirk. These are scripted, require no model calls, and show at most two lines at once. Turn **Resident chatter** off in Settings, or use Quiet mode.
 
 Solo Leveling uses Abel, a locally bundled narrow sans-serif font, and translucent System windows based on the supplied menu references. Its illuminated rails, inset labels, geometric linework, framed actions, status tabs, and notifications differ from the Cyberpunk red frames, cyan selections, angular controls, and condensed Rajdhani lettering. Cyberpunk Skills also shows a hexagonal diagram of the resident's actual accepted procedures. The font and artwork are original choices for this prototype, not extracted anime assets.
+
+## Review the Player menu and private sanctuary
+
+Open [Solo Leveling](http://localhost:5173/prototype/?variant=A&theme=shadow) and select **Chief**. The Player window has a white outline figure and six working access slots for the letterbox, new goals, headquarters, visits, domains, and accepted outcomes. Counts come from the current prototype state. **View your sanctuary** focuses the grander residence. Cyberpunk has a gold-trimmed private penthouse; Solo Leveling has a silver sanctuary with a dome and four spires.
+
+The Chief's terrace is physically separated from the city. No road is generated for it. Teleporting is the owner's way to visit any active home, including while city work is paused. The brief arrival rings respect Quiet mode.
+
+Select a resident and open **Equipment** in Solo Leveling. The diagram matches the role's visual tool and attire. Memory, Skills, Home, and Connection slots open their existing views. Equipment is cosmetic and does not grant permissions. The Cyberpunk theme retains its own resident tabs and hexagonal skills menu.
+
+Notifications now separate the icon and title inside silver frames, with brighter blue outer rails. Permission requests keep their exact scope and **Allow once** / **Deny** controls. Quest info uses the same window treatment. Work and decisions remain simulated.
 
 ## Review the Cyberpunk reference pass
 
@@ -66,7 +76,7 @@ For the night lighting study, open **Settings** and choose **Fixed light** with 
 
 ## Watch time and pause
 
-1. Select **Pause city**. Residents, the Chief, and couriers hold their current positions. **Continue city** resumes movement.
+1. Select **Pause city**. Residents and couriers hold their current positions. **Continue city** resumes movement. The Chief can still teleport while work is paused.
 2. Open **Settings**. Local time is the default. **90s preview** runs a full day in 90 seconds, including gradual dawn and dusk. The clock continues while work is paused.
 3. Choose **Fixed light** for manual art inspection. Return to **Local time** for normal use.
 4. Enable **Quiet mode** to stop walking, pose animation, and chatter. User changes and coarse clock updates still redraw. Indoor work without a cutaway uses coarse updates for optional chatter rather than a continuous animation loop.

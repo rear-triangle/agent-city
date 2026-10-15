@@ -37,7 +37,7 @@ export const state = {
  accepted:2, stage:0, zoom:1, roads:true,
  revision:1, goal:'Choose the right event transport',
  tasks:[] as {id:string; title:string; resident:string; status:string}[],
- toast:'', replay:0, peek:null as string|null, chatter:true, courierSerial:0,
+ toast:'', replay:0, loadoutSlot:'tool' as 'tool'|'attire', peek:null as string|null, chatter:true, courierSerial:0,
 };
 const listeners = new Set<() => void>();
 export function subscribe(fn:()=>void) { listeners.add(fn); return ()=>listeners.delete(fn); }
@@ -57,7 +57,7 @@ export function pauseTown() {
  else { update(()=>state.paused=true);residents.filter(r=>!['Resting','Paused','Pausing'].includes(r.activity)).forEach(pauseResident); }
 }
 export function setVariant(v:Variant) { update(()=>{state.variant=v;state.panel=null;});syncUrl(); }
-export function setTheme(theme:Theme) { update(()=>state.theme=theme);syncUrl(); }
+export function setTheme(theme:Theme) { update(()=>{state.theme=theme;if(theme==='cyber'&&state.tab==='Equipment')state.tab='Work';});syncUrl(); }
 export function syncUrl() { const p=new URLSearchParams(location.search);p.set('variant',state.variant);p.set('theme',state.theme);history.replaceState({},'',`${location.pathname}?${p}`); }
 export function decide(allow:boolean) {
  if(state.approval!=='pending')return;
@@ -112,4 +112,4 @@ export function previewDemand(high:boolean){
 }
 
 /** The Chief is the human owner, never an inference worker or a consolidation candidate. */
-export const chief:Resident={id:'chief',name:'Chief',role:'Chief',home:'Chief headquarters',shadowHome:'Player sanctuary',x:-6,z:5,width:2,depth:1.65,height:1.8,activity:'Resting',task:'Set direction, visit residents, and decide what may proceed.',notes:[],skills:[]};
+export const chief:Resident={id:'chief',name:'Chief',role:'Chief',home:'Chief sanctuary',shadowHome:'Sovereign sanctuary',x:-5,z:12.7,width:3.6,depth:2.7,height:3.4,activity:'Resting',task:'Set direction, visit residents, and decide what may proceed.',notes:[],skills:[]};

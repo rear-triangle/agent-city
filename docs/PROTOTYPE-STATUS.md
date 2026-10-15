@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 4 applies the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -9,7 +9,7 @@ Revision 4 applies the supplied Cyberpunk menu, street, and apartment references
 | Name | Agent City throughout the product UI and package metadata. Town remains the name for a project settlement inside the city network. |
 | Additional towns | Create, name, and switch towns. Residents, notes, queues, approvals, demand, and stage are stored separately in memory. |
 | More depth | Actual orthographic 3D with real geometry, shadows, orbit, zoom, and follow camera. |
-| Visible agents | Residents work indoors with furnished cutaways. Nyx makes a finite example errand. A message robot and the Chief travel generated roads for specific handoffs and visits. |
+| Visible agents | Residents work indoors with furnished cutaways. Nyx makes a finite example errand. A message robot follows generated roads for handoffs. The Chief teleports directly from an isolated sanctuary. |
 | Time-based change | Local computer time is the default. Gradual lighting has a 90-second preview and an explicit fixed-light override. The clock runs independently of task pause. |
 | Full themes | Cyberpunk uses condensed Rajdhani, red frames, cyan selections, angular buttons, framed toggles, and hexagonal skill displays. Solo Leveling uses Abel narrow sans-serif, translucent blue System windows, luminous rails, inset menu labels, geometric linework, shadow armor, and different architecture. |
 | Generated roads | A grid pathfinder routes around home and annex footprints. Seeded layout changes and population changes rebuild geometry. Permission relationships do not come from the drawn path. |
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 4 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 5 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -40,6 +40,29 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M4 native workflow | Not started. Browser composition is not a native overlay. |
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
+
+## Revision 5 browser observations
+
+The latest Chief instruction supersedes the earlier road-based owner visits. The Chief now has a separate estate terrace, no generated road, and instantaneous teleport travel to active homes. Resident communication still uses its existing roads.
+
+| Check | Observed outcome |
+| --- | --- |
+| Estate | Solo Leveling has a silver-and-blue domed sanctuary with four spires, columns, broad stairs, perimeter lights, letterbox, and arrival waystone. Cyberpunk has a private penthouse with gold roof trim, columns, terrace, and neon details. Both sit outside the city footprint. |
+| Chief road exclusion | Starter-city generated routes contain scout, reader, analyst, writer, editor, and critic. There is no Chief route or connecting bridge. |
+| Teleport | A single click put the Chief at Sage's entrance, x=0 and z=-3.15, with moving=false. Teleport home returned directly to x=-5 and z=12.7, location=Inside sanctuary. |
+| Owner control during pause | The same teleport worked while paused=true. Residents remained held. The Chief is excluded from provider scheduling and staffing. |
+| Player screen | Six access slots open letterbox decisions, a new goal, headquarters, visits, domains, and outcomes. The complete outline figure and slot layout fit together. |
+| Resident equipment | Sage showed the Source codex and Shadow attire. Memory displayed two notes; the Memory slot opened those notes. Role equipment is a cosmetic representation of the city model. |
+| Notification | Separate exclamation icon and title, thin silver inner borders, brighter blue outer rails, centered request, scoped details, and Allow once / Deny controls. Allow once changed approval to allowed and phase to review. |
+| Quest info | The goal and existing deliverable checklist use the refined System window. Completion styling uses green without introducing penalties or arbitrary game stats. |
+| Theme isolation | Switching to Cyberpunk retained Rajdhani and removed the System rails. Solo Leveling retained Abel. The Equipment tab falls back to Work in Cyberpunk. |
+| Narrow viewport | Document width equals 390. All six Player slots fit inside the viewport, from x=77 through x=347. |
+| Quiet | Zero added frames across a 1.1-second fixed-light check. Portal animation is suppressed in Quiet mode. |
+| Build | TypeScript and Vite passed. The large renderer-chunk warning remains. |
+
+Revision 5 adds original SVG figures, static border artwork, CSS, and procedural estate geometry. No runtime library, font, or image download was added. The arrival rings animate briefly; their animation does not control provider state. Browser captures and a short teleport recording support review. Native performance gates remain pending.
+
+Current build transfer sizes are about 678 kB JavaScript before compression, 182 kB compressed, 23 kB compressed CSS, and 53 kB of local fonts. These are not process-memory measurements.
 
 ## Revision 4 browser observations
 
