@@ -1,0 +1,53 @@
+/* Small house menus first. The complete inspectors open only on request. */
+.brief-panel.variant-A .canvas-host{right:210px}
+.brief-panel .map-controls{right:345px}
+:root .inspector.house-menu{width:292px;bottom:auto;max-height:calc(100% - 205px);top:28px}
+:root .house-menu .inspector-scroll{padding:18px 21px 22px;overflow:auto}
+:root .house-menu .resident-profile{gap:13px;margin:0 0 23px}
+:root .house-menu .resident-profile h2{font-size:29px;line-height:1.1;margin:0 0 5px}
+:root .house-menu .resident-profile p{font-size:13px;margin:0 0 6px}
+:root .house-menu .resident-state{font-size:12px}
+.house-current{margin:0 0 23px}
+:root .house-current h3{font-size:19px;line-height:1.35;margin:10px 0 0;font-weight:500}
+:root .house-menu .house-look{min-height:42px;font-size:14px;gap:9px}
+.house-menu-bottom{display:flex;justify-content:space-between;gap:12px;padding-top:19px;margin-top:17px;border-top:1px solid var(--line)}
+.house-menu-bottom .text-button,.house-more,.detail-back{display:inline-flex;align-items:center;gap:6px;font:500 13px var(--ui-font);color:var(--muted);text-align:left}
+.house-menu-bottom .icon,.house-more .icon,.detail-back .icon{width:13px;height:13px}
+.house-menu-bottom button:hover,.house-more:hover,.detail-back:hover{color:var(--accent)}
+.detail-back{margin:0 0 18px}
+.house-more{margin-top:20px}
+:root .house-menu .chief-crest{margin:0;width:39px;height:47px;flex-shrink:0}
+:root .house-menu .chief-crest .icon{width:25px}
+:root .house-menu .chief-move-hint{font-size:15px;line-height:1.5;margin:0 0 20px}
+.chief-quick-actions .follow-agent{margin:0;border:0;border-top:1px solid var(--line);padding:14px 0;font-size:14px}
+:root[data-theme=shadow] .house-menu .inspector-header{padding:20px 20px 12px;min-height:67px}
+:root[data-theme=shadow] .house-menu .system-caption{font-size:14px;padding:5px 10px;letter-spacing:2px}
+:root[data-theme=shadow] .house-menu .system-title-icon{width:29px;min-width:29px}
+:root[data-theme=shadow] .house-current h3{font-weight:400;font-size:21px}
+:root[data-theme=shadow] .house-menu .resident-profile h2{font-size:30px}
+:root[data-theme=shadow] .house-menu-bottom .text-button,:root[data-theme=shadow] .house-more,:root[data-theme=shadow] .detail-back{font-weight:400;font-size:15px}
+.chief-presence{position:fixed;display:flex;align-items:center;gap:5px;transform:translate(-50%,-100%);pointer-events:auto;z-index:35;color:#f9ecc6;background:#12232eed;border:1px solid #d6c58d9c;padding:4px 7px;box-shadow:0 2px 9px #0005;font:500 12px var(--ui-font);white-space:nowrap}
+.chief-presence svg{width:15px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5}
+.chief-presence.at-edge:after{content:'↗';font:16px sans-serif}
+.chief-presence:hover{border-color:#fff6d9;background:#233c50}
+:root[data-theme=shadow] .chief-presence{font-weight:400;border-color:#e5e8bba6;color:#f1f4d5}
+.world-labels .house-label{display:flex;align-items:center;gap:6px;max-width:170px}
+.world-labels .house-label strong{font-weight:inherit}
+.world-labels .house-label small{font-size:9px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+@media(min-width:851px){.brief-panel.variant-B .inspector.house-menu{width:292px;left:24px;right:auto;top:26px;bottom:auto}.brief-panel.variant-C .inspector.house-menu{right:23px;left:auto;top:30px;bottom:auto}}
+@media(max-width:850px){.brief-panel.variant-A .canvas-host{right:0}.brief-panel .map-controls{right:22px}.brief-panel.variant-A .town-heading{opacity:.5}}
+@media(max-width:580px){:root .inspector.house-menu,:root .variant-B .inspector.house-menu,:root .variant-C .inspector.house-menu{left:15px;right:15px;top:auto;bottom:150px;width:auto;max-height:370px}.brief-panel.variant-A .town-heading{opacity:1}.house-menu-bottom{padding-top:15px;margin-top:13px}:root .house-menu .resident-profile{margin-bottom:16px}:root .house-menu .inspector-scroll{padding:12px 21px 20px}.house-current{margin-bottom:18px}:root .house-menu .house-look{min-height:37px}.brief-panel.variant-B .canvas-host{display:block;left:0}.brief-panel.variant-B .command-home{visibility:hidden}.world-labels .house-label small{display:none}.chief-presence{font-size:11px;padding:3px 6px}.chief-presence svg{height:18px}}
+
+@media(max-width:580px){
+ .brief-panel{--house-menu-height:clamp(270px,44vh,370px)}
+ .brief-panel .canvas-host{bottom:calc(150px + var(--house-menu-height))}
+ :root .brief-panel .inspector.house-menu{max-height:var(--house-menu-height)}
+ .brief-panel .town-heading,.brief-panel .city-actions,.brief-panel .world-clock,.brief-panel .map-legend,.brief-panel .map-controls,.brief-panel .map-overline{display:none}
+ .brief-panel.variant-C .canvas-host{height:auto;top:0;bottom:calc(150px + var(--house-menu-height))}
+}
+:root .house-menu:has(.chief-quick-actions) .resident-profile{margin-bottom:12px}
+:root .house-menu:has(.chief-quick-actions) .resident-profile h2{font-size:27px;margin-bottom:3px}
+:root .house-menu:has(.chief-quick-actions) .resident-profile p{font-size:12px;margin:0}
+:root .house-menu .chief-move-hint{font-size:14px;margin-bottom:12px}
+:root .house-menu .chief-quick-actions .follow-agent{padding:9px 0;min-height:34px;line-height:1.2}
+:root .house-menu .house-more{min-height:24px;padding:0;margin-top:14px}

@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 7 adds persistent Chief visibility, click-to-teleport travel, compact house menus, and Solo Leveling resident names with Igris as mayor. Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 6 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 7 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -40,6 +40,28 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M4 native workflow | Not started. Browser composition is not a native overlay. |
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
+
+## Revision 7 interaction checks
+
+House selection now starts with a small menu containing the name, role, activity, current task, Look inside, and task assignment. A pending request adds its review action. More details reveals the existing complete inspector; Less detail collapses it. The Chief also has a compact entry menu, with the full Player window one click away. Mobile brief menus reserve a separate area for the world.
+
+The Chief starts on the sanctuary terrace, remains rendered through building occlusion, and has a static ground ring. World clicks teleport the same character without creating agents, tasks, or roads. House clicks use the entrance and open its menu. The location marker remains visible at the camera edge or in a covering inspector's header. Theme and layout changes preserve the Chief's position in the current town.
+
+| Check | Observed outcome |
+| --- | --- |
+| Open ground | A canvas click moved the Chief from the sanctuary to a ground point immediately. No task was created and no Chief road appeared. |
+| House selection | A 3D house click and a house-label click selected the reader, moved the Chief to x=0, z=-3.15, and opened the compact menu. |
+| Cutaway | Look inside revealed the reader or mayor working indoors; the Chief stayed visible at the entrance. |
+| Detail expansion | More details restored Work, Equipment, Memory, Skills, and History in Solo Leveling. The reader's two existing notes remained intact. |
+| Theme change | Solo Leveling showed Igris, Kaisel, Tusk, Iron, Shadow Knight 01, Tank, and Beru. Cyberpunk restored Atlas, Nyx, Sage, Vector, Quill, Echo, and Vex. The Chief's position, resident IDs, and notes were retained. |
+| Growth | Expanding to the 12-agent prototype cap produced 12 unique Solo Leveling names, including numbered Knight, Mage, and Assassin aliases. |
+| Paused and Quiet | Ground teleport worked with both enabled. The Chief remained visible, tasks stayed empty, accepted outcomes stayed at two, and a 1.1-second fixed-light interval added zero rendered frames. |
+| Layouts and narrow view | Compact menus were checked in A, B, and C. Both themes were checked at 1440 × 900 and 390 × 844 without horizontal document overflow. Checked house-menu buttons did not overflow their text bounds. |
+| Build | TypeScript and Vite passed. The existing renderer-chunk warning remains. |
+
+The named-shadow selection follows the owner's anime scope through Beru. The [official Season 2 shadow visuals](https://sololeveling-anime.net/special/shadows-visual/) provided the character roster reference; English aliases follow the owner's naming direction. Generic numbered names avoid extending beyond that scope. Roles and character models remain this prototype's representations.
+
+This revision adds no runtime library, model, image, or font. Current transfer sizes are approximately 684 kB JavaScript before compression, 183 kB compressed, 24 kB compressed CSS, and 92 kB bundled open fonts. Native resource gates remain pending. Earlier observations below describe the behavior of their respective revisions.
 
 ## Revision 6 typography checks
 
@@ -68,7 +90,7 @@ The latest Chief instruction supersedes the earlier road-based owner visits. The
 
 Revision 5 adds original SVG figures, static border artwork, CSS, and procedural estate geometry. No runtime library, font, or image download was added. The arrival rings animate briefly; their animation does not control provider state. Browser captures and a short teleport recording support review. Native performance gates remain pending.
 
-Current build transfer sizes are about 678 kB JavaScript before compression, 182 kB compressed, 23 kB compressed CSS, and 92 kB of bundled fonts. These are not process-memory measurements.
+Revision 6 build transfer sizes were about 678 kB JavaScript before compression, 182 kB compressed, 23 kB compressed CSS, and 92 kB of bundled fonts. These are not process-memory measurements.
 
 ## Revision 4 browser observations
 

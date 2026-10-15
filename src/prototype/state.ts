@@ -32,7 +32,7 @@ export const state = {
  quiet:matchMedia('(prefers-reduced-motion: reduce)').matches,
  selected:null as string|null,
  panel:null as 'chief'|'resident'|'approvals'|'activity'|'goal'|'road'|'settings'|'outcomes'|'towns'|null,
- tab:'Work', paused:false, approval:'pending' as 'pending'|'allowed'|'denied'|'none',
+ tab:'Work', detailsExpanded:false, paused:false, approval:'pending' as 'pending'|'allowed'|'denied'|'none',
  phase:'working' as 'working'|'review'|'accepted'|'idle',
  accepted:2, stage:0, zoom:1, roads:true,
  revision:1, goal:'Choose the right event transport',
@@ -42,10 +42,19 @@ export const state = {
 const listeners = new Set<() => void>();
 export function subscribe(fn:()=>void) { listeners.add(fn); return ()=>listeners.delete(fn); }
 export function update(fn?:()=>void) { fn?.(); state.revision++; listeners.forEach(fn=>fn()); }
+// Theme aliases leave resident IDs, notes, tasks, and town snapshots intact.
+const shadowNames:Record<string,string>={mayor:'Igris',scout:'Kaisel',reader:'Tusk',analyst:'Iron',writer:'Shadow Knight 01',editor:'Tank',critic:'Beru'};
+const extraShadowNames=['Shadow Knight 02','Shadow Mage 01','Shadow Mage 02','Shadow Assassin 01','Shadow Mage 03'];
+export function residentName(r:Resident,theme:Theme=state.theme):string {
+ if(theme!=='shadow'||r.id==='chief')return r.name;
+ if(shadowNames[r.id])return shadowNames[r.id];
+ const index=Number(r.id.replace('specialist-',''))-7;
+ return extraShadowNames[index]||`Shadow Knight ${String(index+3).padStart(2,'0')}`;
+}
 export function resident(id:string) { return residents.find(r=>r.id===id)!; }
 let toastTimer:ReturnType<typeof setTimeout>;
 export function toast(message:string) { clearTimeout(toastTimer);update(()=>state.toast=message);toastTimer=setTimeout(()=>update(()=>state.toast=''),4200); }
-export function select(id:string) { update(()=>{state.selected=id;state.panel='resident';state.tab='Work';}); }
+export function select(id:string) { update(()=>{state.selected=id;state.panel='resident';state.tab='Work';state.detailsExpanded=false;}); }
 export function pauseResident(r:Resident) {
  if(r.activity==='Paused') { update(()=>{r.activity=r.priorActivity || 'Resting';}); return; }
  if(r.activity==='Pausing') return;
@@ -64,7 +73,7 @@ export function decide(allow:boolean) {
  const originTown=state.townId;
  update(()=>{state.approval=allow?'allowed':'denied';resident('critic').activity=allow?'Review':'Waiting';
  exchanges.unshift({id:'MSG-015',from:'mayor',to:'critic',purpose:allow?'Permission allowed':'Permission denied',summary:allow?'Read the sample trace once. The demo scope remains read-only.':'Use the supplied documentation and disclose the missing trace check.',status:'Delivered',time:'Just now'});});
- toast(allow?'Demo permission allowed once. Review is continuing.':'Demo permission denied. Vex will disclose the unverified trace.');
+ toast(allow?'Demo permission allowed once. Review is continuing.':`Demo permission denied. ${residentName(resident('critic'))} will disclose the unverified trace.`);
  setTimeout(()=>{if(state.townId!==originTown){const t=towns.find(t=>t.id===originTown);if(t){t.snapshot.phase='review';t.people.find(r=>r.id==='mayor')!.activity='Review';for(const r of t.people.filter(r=>['scout','reader'].includes(r.id)))r.activity='Resting';}return;}update(()=>{state.phase='review';resident('mayor').activity='Review';resident('scout').activity='Resting';resident('reader').activity='Resting';});},1800);
 }
 export function accept() {
@@ -92,8 +101,8 @@ export function expandCity(){if(state.stage>=2&&residents.length>=12&&!residents
  const retired=residents.find(r=>r.retired);if(retired){retired.retired=false;}else if(residents.length<12){const i=residents.length,template=copy(initialPeople[3]);residents.push({...template,id:`specialist-${i}`,name:['Forge','Lyra','Rune','Flux','Onyx'][i-7],role:['Builder','Designer','Archivist','Tester','Researcher'][i-7],home:'Specialist annex',shadowHome:'Specialist chamber',x:[-7.8,7.8,-3.7,4,-5.8][i-7],z:[-.6,1,7,7,-6][i-7],activity:'Resting',retired:false,task:'Ready for an assignment',notes:['Retain useful work when the city consolidates.']});}}
  state.layoutRevision++;});toast('Expanded for additional capacity. Cosmetic stages do not grant permissions.');}
 export function consolidateCity(){if(state.stage>0){update(()=>{state.stage--;state.layoutRevision++;});toast('Unused annexes consolidated. Identity, memory, and history remain.');return;}
- const candidate=[...residents].reverse().find(r=>r.id!=='mayor'&&!r.retired&&r.activity==='Resting'&&!state.tasks.some(t=>t.resident===r.id&&t.status!=='Accepted'));if(!candidate){toast('No idle home can be consolidated. Pause and finish its work first.');return;}update(()=>{candidate.retired=true;state.layoutRevision++;});toast(`${candidate.name}'s home is retired. Notes and history are retained for recall.`);}
-export function recallResident(id:string){update(()=>{resident(id).retired=false;state.layoutRevision++;});toast(`${resident(id).name} recalled with the same identity and memory.`);}
+ const candidate=[...residents].reverse().find(r=>r.id!=='mayor'&&!r.retired&&r.activity==='Resting'&&!state.tasks.some(t=>t.resident===r.id&&t.status!=='Accepted'));if(!candidate){toast('No idle home can be consolidated. Pause and finish its work first.');return;}update(()=>{candidate.retired=true;state.layoutRevision++;});toast(`${residentName(candidate)}'s home is retired. Notes and history are retained for recall.`);}
+export function recallResident(id:string){update(()=>{resident(id).retired=false;state.layoutRevision++;});toast(`${residentName(resident(id))} recalled with the same identity and memory.`);}
 export function clockHours(now=Date.now()){if(state.clockMode==='local'){const d=new Date(now);return d.getHours()+d.getMinutes()/60+d.getSeconds()/3600;}if(state.clockMode==='accelerated')return (17+(now-state.clockOrigin)/90000*24)%24;return {day:12,dusk:18,night:0}[state.lighting];}
 export function daylight(now=Date.now()){return Math.max(0,Math.min(1,(Math.sin((clockHours(now)-6)/24*Math.PI*2)+.15)*1.4));}
 export function clockLabel(){const h=clockHours();return `${String(Math.floor(h)).padStart(2,'0')}:${String(Math.floor(h%1*60)).padStart(2,'0')}`;}

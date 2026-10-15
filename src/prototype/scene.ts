@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { activeResidents, state, subscribe, select, update, residents, daylight, clockHours, chief, exchanges, type Resident } from './state';
+import { activeResidents, state, subscribe, select, update, residents, daylight, clockHours, chief, exchanges, residentName, resident, type Resident } from './state';
 import { generateRoads, door, pointOnPath, type GeneratedRoad, type Point } from './layout';
 import { createAgent, poseAgent, roleColors, type AgentModel } from './characters';
 
@@ -14,12 +14,12 @@ export class TownScene {
  private geometries={box:new RoundedBoxGeometry(1,1,1,1,.035),cylinder:new T.CylinderGeometry(1,1,1,12),sphere:new T.SphereGeometry(1,16,10),cone:new T.ConeGeometry(1,1,4)};
  private teleportPortal:T.Group|null=null;private portalUntil=0;
  private lastReplay=0;private initialTowns=new Set<string>();
- private chiefAt:Point=[chief.x,chief.z]; private courier:T.Group|null=null;
+ private sceneTown=state.townId; private chiefAt:Point=door(chief); private courier:T.Group|null=null;
  private delivery:{points:Point[];elapsed:number;duration:number;id:string}|null=null;
  private deliveredSerial=-1; private completedInitial=false;
  private bubbles=new Map<string,{text:string;until:number}>(); private nextQuip=9;
  private agents=new Map<string,AgentModel>(); private paths:GeneratedRoad[]=[];
- private pickers:T.Object3D[]=[];private raycaster=new T.Raycaster();private labels=document.createElement('div');
+ private chiefMarker=document.createElement('button');private pickers:T.Object3D[]=[];private raycaster=new T.Raycaster();private labels=document.createElement('div');
  private w=1;private h=1;private angle=.67;private target=new T.Vector3(0,1.5,0);private followId:string|null=null;
  private timer=0;private clockTimer=0;private last=performance.now();private lastLight=Number.NEGATIVE_INFINITY;private lastLabels=0;
  private lightState='';private signature='';private elapsed=0;private frames=0;private frameMs=0;private maxFrameMs=0;private ready=true;
@@ -28,31 +28,52 @@ export class TownScene {
   try{this.renderer=new T.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});}catch{this.ready=false;host.innerHTML='<div class="graphics-notice">3D is unavailable in this browser. The resident list and city controls remain available.</div>';return;}
   this.renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFShadowMap;this.renderer.shadowMap.autoUpdate=false;
   this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.35;
-  const canvas=this.renderer.domElement;canvas.className='town-canvas';canvas.setAttribute('role','img');canvas.setAttribute('aria-label','Interactive 3D Agent City. Drag to rotate. Use the resident list for keyboard access.');
+  const canvas=this.renderer.domElement;canvas.className='town-canvas';canvas.setAttribute('role','img');canvas.setAttribute('aria-label','Interactive 3D Agent City. Click to teleport the Chief. Click a house to visit and open its menu. Drag to rotate. Resident controls also support keyboard access.');
   this.labels.className='world-labels';host.append(canvas,this.labels);
+  this.chiefMarker.className='chief-presence';this.chiefMarker.dataset.action='locate-chief';this.chiefMarker.setAttribute('aria-label','Find Chief');
+  this.chiefMarker.innerHTML='<svg viewBox="0 0 22 29" aria-hidden="true"><path d="m6 8-1-6 6 3 6-3-1 6M7 9h8v7l-4 3-4-3Zm0 9-4 9h16l-4-9M11 19v8"/></svg><span>Chief</span>';
+  document.querySelector('.app-shell')!.append(this.chiefMarker);
   this.scene.add(this.world,this.actors,this.sun,this.ambient,this.cyanLight,this.redLight);this.cyanLight.position.set(-3,3,2);this.redLight.position.set(4,3,-2);this.sun.position.set(-7,15,8);this.sun.castShadow=true;this.sun.shadow.mapSize.set(1024,1024);this.sun.shadow.camera.left=-14;this.sun.shadow.camera.right=14;this.sun.shadow.camera.top=12;this.sun.shadow.camera.bottom=-12;this.sun.shadow.normalBias=.04;this.sun.shadow.bias=-.0005;this.sun.shadow.camera.far=55;
   new ResizeObserver(()=>this.resize()).observe(host);
   subscribe(()=>{this.refresh();this.lastLabels=0;this.invalidate();this.scheduleClock();});
   document.addEventListener('visibilitychange',()=>{clearTimeout(this.timer);clearTimeout(this.clockTimer);this.last=performance.now();if(!document.hidden){this.invalidate();this.scheduleClock();}});
   canvas.addEventListener('pointerdown',e=>{this.down=true;this.dragged=false;this.pointer=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId);});
   canvas.addEventListener('pointermove',e=>{if(!this.down)return;const dx=e.clientX-this.pointer[0],dy=e.clientY-this.pointer[1];if(Math.abs(dx)+Math.abs(dy)>2){this.dragged=true;this.followId=null;this.angle-=dx*.006;if(e.shiftKey)this.target.y+=dy*.008;this.pointer=[e.clientX,e.clientY];this.invalidate();}});
-  canvas.addEventListener('pointerup',e=>{this.down=false;if(this.dragged)return;const rect=canvas.getBoundingClientRect();this.raycaster.setFromCamera(new T.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1),this.camera);const hit=this.raycaster.intersectObjects([...this.pickers,...this.actors.children],true).find(h=>h.object.userData.resident);if(hit){if(hit.object.userData.resident==='chief')update(()=>state.panel='chief');else select(hit.object.userData.resident);}});
+  canvas.addEventListener('pointerup',e=>{
+   this.down=false;if(this.dragged)return;
+   const rect=canvas.getBoundingClientRect();
+   this.raycaster.setFromCamera(new T.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1),this.camera);
+   const hit=this.raycaster.intersectObjects([...this.pickers,...this.actors.children.filter(o=>o.visible)],true).find(h=>h.object.userData.resident);
+   if(hit){if(hit.object.userData.resident==='chief'&&!this.pickers.includes(hit.object))update(()=>{state.panel='chief';state.detailsExpanded=false;});else this.inspectHome(hit.object.userData.resident);return;}
+   const point=this.raycaster.ray.intersectPlane(new T.Plane(new T.Vector3(0,1,0),0),new T.Vector3());
+   if(point)this.teleportChief([point.x,point.z]);
+  });
+  canvas.addEventListener('pointercancel',()=>{this.down=false;this.dragged=true;});
   canvas.addEventListener('wheel',e=>{e.preventDefault();update(()=>state.zoom=Math.max(.7,Math.min(2.6,state.zoom-e.deltaY*.0015)));},{passive:false});
   canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();this.ready=false;clearTimeout(this.timer);});canvas.addEventListener('webglcontextrestored',()=>{this.ready=true;this.signature='';this.refresh();this.invalidate();});
   this.refresh();this.resize();this.scheduleClock();
  }
  reset(){this.followId=null;this.target.set(0,1.5,0);this.angle=.67;update(()=>state.zoom=1);}
  rotate(){this.followId=null;this.angle+=Math.PI/4;this.invalidate();}
- follow(id:string){this.followId=id;update(()=>{state.zoom=2.2;state.peek=id;});}
+ follow(id:string){const r=id==='chief'?chief:activeResidents().find(r=>r.id===id);if(!r)return;this.chiefAt=door(r);this.followId=id;update(()=>{state.zoom=2.2;state.peek=id;});}
+ locateChief(){this.followId='chief';update(()=>state.zoom=1.9);}
  focusChief(){this.followId=null;this.target.set(chief.x,2.2,chief.z);this.angle=.67;update(()=>{state.peek=null;state.zoom=1.5;});}
+ /** House menus and owner travel share one entry point, including keyboard controls. */
+ inspectHome(id:string){
+  const r=id==='chief'?chief:activeResidents().find(r=>r.id===id);if(!r)return;
+  this.teleportChief(door(r),false);
+  if(id==='chief')update(()=>{state.panel='chief';state.detailsExpanded=false;});else select(id);
+ }
  visitHome(id:string){
   const r=id==='chief'?chief:activeResidents().find(r=>r.id===id);if(!r)return;
-  this.chiefAt=id==='chief'?[chief.x,chief.z]:door(r);this.portalUntil=performance.now()+1100;
-  this.followId=id==='chief'?null:'chief';if(id==='chief')this.target.set(chief.x,2.2,chief.z);
-  this.speak('chief',id==='chief'?'My own corner of the world.':`Hello, ${r.name}. Just checking in.`);
-  if(id!=='chief')this.speak(r.id,'Welcome, Chief.');
-  // Owner travel is instantaneous and grants no communication roads to residents.
-  update(()=>{state.peek=null;state.zoom=id==='chief'?1.5:1.9;});
+  this.teleportChief(door(r),false);this.followId='chief';
+  this.speak('chief',id==='chief'?'My own corner of the world.':`Hello, ${residentName(r)}. Just checking in.`);
+  update(()=>{state.peek=null;state.zoom=1.9;});
+ }
+ private teleportChief(point:Point,closeMenu=true){
+  this.chiefAt=point;this.portalUntil=performance.now()+1100;this.followId=null;
+  // A scene click never queues work or changes communication roads.
+  if(closeMenu)update(()=>{state.panel=null;state.selected=null;state.peek=null;});else this.invalidate();
  }
  private speak(id:string,text:string){if(state.chatter&&!state.quiet){if(!this.bubbles.has(id)&&this.bubbles.size>=2)this.bubbles.delete(this.bubbles.keys().next().value!);this.bubbles.set(id,{text,until:this.elapsed+5.5});}}
  private beginDelivery(){
@@ -61,10 +82,10 @@ export class TownScene {
   const points=[...scout,...reader.slice().reverse()],length=points.slice(1).reduce((n,p,i)=>n+Math.hypot(p[0]-points[i][0],p[1]-points[i][1]),0);
   const id=`MSG-${String(20+exchanges.length).padStart(3,'0')}`;
   this.delivery={points,elapsed:0,duration:length/1.1,id};this.speak('scout','Sources packed. Handle with curiosity.');
-  queueMicrotask(()=>update(()=>exchanges.unshift({id,from:'scout',to:'reader',purpose:'Source handoff via Atlas',summary:'Demo courier carries a source index through the mayor hub.',status:'In transit',time:'Just now'})));
+  queueMicrotask(()=>update(()=>exchanges.unshift({id,from:'scout',to:'reader',purpose:'Source handoff via mayor',summary:'Demo courier carries a source index through the mayor hub.',status:'In transit',time:'Just now'})));
  }
 
- stats(){if(!this.renderer)return {renderer:'WebGL2 unavailable'};return {renderer:'Three.js / orthographic 3D',frames:this.frames,meanDrawMs:this.frames?+(this.frameMs/this.frames).toFixed(2):0,maxDrawMs:+this.maxFrameMs.toFixed(2),drawCalls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,geometries:this.renderer.info.memory.geometries,textures:this.renderer.info.memory.textures,characterPositions:structuredClone(this.walking),chiefTravel:'teleport',portalActive:performance.now()<this.portalUntil,insideView:state.peek,courier:this.delivery?{id:this.delivery.id,progress:this.delivery.elapsed/this.delivery.duration}:null,speech:[...this.bubbles].map(([id,b])=>({id,text:b.text})),generatedRoads:this.paths.map(p=>({resident:p.resident,points:p.points,cells:p.cells})),scheduledFrames:!document.hidden&&!state.quiet&&!state.paused&&(this.hasMotion()||state.chatter&&this.hasWork()),motionFrames:this.hasMotion(),clockMode:state.clockMode,hour:clockHours(),daylight:daylight(),viewport:[this.w,this.h]};}
+ stats(){if(!this.renderer)return {renderer:'WebGL2 unavailable'};return {renderer:'Three.js / orthographic 3D',frames:this.frames,meanDrawMs:this.frames?+(this.frameMs/this.frames).toFixed(2):0,maxDrawMs:+this.maxFrameMs.toFixed(2),drawCalls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,geometries:this.renderer.info.memory.geometries,textures:this.renderer.info.memory.textures,characterPositions:structuredClone(this.walking),chiefTravel:'teleport',chiefVisible:this.agents.get('chief')?.root.visible,chiefScreen:this.project(this.chiefAt[0],1,this.chiefAt[1]),houseTargets:activeResidents().map(r=>({id:r.id,name:residentName(r),...this.project(r.x,.6,r.z)})),portalActive:performance.now()<this.portalUntil,insideView:state.peek,courier:this.delivery?{id:this.delivery.id,progress:this.delivery.elapsed/this.delivery.duration}:null,speech:[...this.bubbles].map(([id,b])=>({id,text:b.text})),generatedRoads:this.paths.map(p=>({resident:p.resident,points:p.points,cells:p.cells})),scheduledFrames:!document.hidden&&!state.quiet&&!state.paused&&(this.hasMotion()||state.chatter&&this.hasWork()),motionFrames:this.hasMotion(),clockMode:state.clockMode,hour:clockHours(),daylight:daylight(),viewport:[this.w,this.h]};}
  private material(color:string,glow=false){const key=color+glow;if(!this.mats.has(key)){const mat=new T.MeshStandardMaterial({color,roughness:.83,metalness:glow?.15:.2,flatShading:true,emissive:glow?color:'#000000',emissiveIntensity:glow?.8:0});this.mats.set(key,mat);if(glow)this.glowMats.push(mat);}return this.mats.get(key)!;}
  private box(parent:T.Object3D,x:number,y:number,z:number,w:number,h:number,d:number,color:string,glow=false){const m=new T.Mesh(this.geometries.box,this.material(color,glow));m.position.set(x,y,z);m.scale.set(w,h,d);m.castShadow=!glow;m.receiveShadow=!glow;parent.add(m);return m;}
  private cylinder(parent:T.Object3D,x:number,y:number,z:number,r:number,h:number,color:string){const m=new T.Mesh(this.geometries.cylinder,this.material(color));m.position.set(x,y,z);m.scale.set(r,h,r);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
@@ -153,7 +174,7 @@ export class TownScene {
    this.box(g,side*(w/2-.13),h*.42+.45,d/2+.13,.17,h*.82,.25,'#77839d');this.box(g,side*(w/2+.26),.62,d/2+.26,.13,.8,.13,'#32415f');this.cone(g,side*(w/2+.26),1.12,d/2+.26,.11,.28,'#9ac9ff');
   }
   for(let i=0;i<5;i++)this.box(g,0,.37-i*.055,d/2+.19+i*.12,.7,.12,.16,'#78849c');
-  this.sign(g,r.id==='mayor'?'COMMAND CITADEL':r.role.toUpperCase()+' / '+r.name.toUpperCase(),0,h+.38,d/2+.09,w*.91,'#b3d3ff');
+  this.sign(g,r.id==='mayor'?'COMMAND CITADEL':r.role.toUpperCase()+' / '+residentName(r).toUpperCase(),0,h+.38,d/2+.09,w*.91,'#b3d3ff');
   if(state.stage>0){this.box(g,-w/2-.45,.94,-.1,.7,1.3,1.05,'#495b7c');this.cone(g,-w/2-.45,1.9,-.1,.7,.7,'#3a5486');}if(state.stage>1){for(const x of [-.45,.45])this.spire(g,x,-.3,h+.6,1,.13);}
  }
  private terrain(){const shadow=state.theme==='shadow';this.scene.background=new T.Color(shadow?'#090f20':'#0e1a26');this.scene.fog=new T.Fog(shadow?'#090f20':'#0e1a26',38,64);
@@ -245,13 +266,19 @@ export class TownScene {
   for(const objects of buckets.values()){const first=objects[0];const mesh=new T.InstancedMesh(first.geometry,first.material,objects.length);mesh.userData={...first.userData};objects.forEach((o,i)=>mesh.setMatrixAt(i,o.matrixWorld));mesh.castShadow=first.castShadow;mesh.receiveShadow=first.receiveShadow;mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();batched.add(mesh);}this.world.clear();this.world.add(batched);
  }
  private disposeGroup(g:T.Group){const shared=new Set(Object.values(this.geometries));g.traverse(o=>{if(o instanceof T.Mesh){if(!shared.has(o.geometry))o.geometry.dispose();const materials=Array.isArray(o.material)?o.material:[o.material];for(const m of materials){if(m instanceof T.MeshBasicMaterial&&m.map)m.map.dispose();if(![...this.mats.values()].includes(m as T.MeshStandardMaterial))m.dispose();}}});g.clear();}
- private refresh(){if(!this.renderer)return;const signature=JSON.stringify([state.theme,state.stage,state.roads,state.layoutRevision,state.townId,activeResidents().map(r=>[r.id,r.x,r.z])]);if(signature===this.signature)return;this.signature=signature;if(this.lastReplay!==state.replay){this.initialTowns.delete(state.townId);this.lastReplay=state.replay;}this.elapsed=0;this.portalUntil=0;if(this.delivery){const e=exchanges.find(e=>e.id===this.delivery!.id);if(e)e.status='Interrupted by scene replan';}this.delivery=null;this.bubbles.clear();this.nextQuip=9;this.completedInitial=false;this.deliveredSerial=state.courierSerial;this.chiefAt=[chief.x,chief.z];this.lastLight=Number.NEGATIVE_INFINITY;this.followId=null;this.target.set(0,1.5,0);this.disposeGroup(this.world);this.disposeGroup(this.actors);this.mats.forEach(m=>m.dispose());this.mats.clear();this.glowMats=[];this.walking={};this.agents.clear();for(const p of this.pickers){if(p instanceof T.Mesh){p.geometry.dispose();(p.material as T.Material).dispose();}}this.pickers=[];this.paths=generateRoads(activeResidents(),state.stage);this.terrain();if(state.theme==='cyber')this.cyberDistrict();
+ private refresh(){if(!this.renderer)return;const signature=JSON.stringify([state.theme,state.stage,state.roads,state.layoutRevision,state.townId,activeResidents().map(r=>[r.id,r.x,r.z])]);if(signature===this.signature)return;this.signature=signature;if(this.lastReplay!==state.replay){this.initialTowns.delete(state.townId);this.lastReplay=state.replay;}this.elapsed=0;this.portalUntil=0;if(this.delivery){const e=exchanges.find(e=>e.id===this.delivery!.id);if(e)e.status='Interrupted by scene replan';}this.delivery=null;this.bubbles.clear();this.nextQuip=9;this.completedInitial=false;this.deliveredSerial=state.courierSerial;if(this.sceneTown!==state.townId){this.chiefAt=door(chief);this.sceneTown=state.townId;}this.lastLight=Number.NEGATIVE_INFINITY;this.followId=null;this.target.set(0,1.5,0);this.disposeGroup(this.world);this.disposeGroup(this.actors);this.mats.forEach(m=>m.dispose());this.mats.clear();this.glowMats=[];this.walking={};this.agents.clear();for(const p of this.pickers){if(p instanceof T.Mesh){p.geometry.dispose();(p.material as T.Material).dispose();}}this.pickers=[];this.paths=generateRoads(activeResidents(),state.stage);this.terrain();if(state.theme==='cyber')this.cyberDistrict();
   for(const r of [...activeResidents(),chief]){
    const before=this.world.children.length;
    if(r.id==='chief')this.chiefHome();else if(state.theme==='cyber')this.cyber(r);else this.shadow(r);
    this.world.children.slice(before).filter(g=>!g.userData.keepForCutaway).forEach(g=>g.traverse(o=>o.userData.home=r.id));this.room(r);
    const picker=new T.Mesh(new T.BoxGeometry(r.width,r.height+1,r.depth),new T.MeshBasicMaterial({visible:false}));picker.position.set(r.x,(r.height+1)/2,r.z);picker.userData.resident=r.id;picker.updateMatrixWorld();this.pickers.push(picker);
-   const actor=createAgent(r,state.theme);this.agents.set(r.id,actor);this.actors.add(actor.root);
+   const actor=createAgent(r,state.theme);
+   if(r.id==='chief'){
+    actor.root.scale.setScalar(1.4);
+    const ring=new T.Mesh(new T.TorusGeometry(.4,.025,4,32),new T.MeshBasicMaterial({color:'#f8e7aa',depthTest:false,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=.04;actor.root.add(ring);
+    actor.root.traverse(o=>{if(o instanceof T.Mesh){o.renderOrder=30;const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms){m.depthTest=false;m.depthWrite=false;}}});
+   }
+   this.agents.set(r.id,actor);this.actors.add(actor.root);
   }
   this.courier=new T.Group();
   this.cylinder(this.courier,0,.32,0,.17,.4,state.theme==='shadow'?'#8ebcec':'#c3b377');this.sphere(this.courier,0,.65,0,.18,'#466d8c');this.box(this.courier,0,.66,.16,.22,.08,.04,'#c3edff',true);this.box(this.courier,0,.37,-.2,.25,.22,.13,'#efe0af');
@@ -259,7 +286,7 @@ export class TownScene {
   this.teleportPortal=new T.Group();this.ring(this.teleportPortal,0,.17,0,.55,'#c2f3ff',.03);this.ring(this.teleportPortal,0,.2,0,.74,'#89b5ff',.02);this.teleportPortal.visible=false;this.actors.add(this.teleportPortal);
   this.batchStatic();this.renderer.shadowMap.needsUpdate=true;this.labelNodes();
  }
- private labelNodes(){this.labels.innerHTML=[...activeResidents(),chief].map(r=>`<button class="house-label ${state.selected===r.id?'selected':''}" ${r.id==='chief'?'data-action="chief"':`data-select="${r.id}"`} aria-label="Inspect ${r.name}, ${r.role}, ${r.activity}"><span class="status-dot ${['Reading','Researching'].includes(r.activity)?'active':''}"></span>${r.role}</button><button class="agent-label" data-follow="${r.id}" aria-label="Follow ${r.name}">${r.name}</button><div class="speech-bubble" data-bubble="${r.id}" hidden></div>`).join('')+'<div class="speech-bubble courier-bubble" data-bubble="courier" hidden></div>';}
+ private labelNodes(){this.labels.innerHTML=[...activeResidents(),chief].map(r=>`<button class="house-label ${state.selected===r.id?'selected':''}" ${r.id==='chief'?'data-inspect-home="chief"':`data-select="${r.id}"`} aria-label="Inspect ${residentName(r)}, ${r.role}, ${r.activity}"><span class="status-dot ${['Reading','Researching'].includes(r.activity)?'active':''}"></span>${r.id==='chief'?'Sanctuary':`<strong>${residentName(r)}</strong><small>${r.role}</small>`}</button><button class="agent-label" data-follow="${r.id}" aria-label="Follow ${residentName(r)}">${residentName(r)}</button><div class="speech-bubble" data-bubble="${r.id}" hidden></div>`).join('')+'<div class="speech-bubble courier-bubble" data-bubble="courier" hidden></div>';}
  private resize(){if(!this.renderer)return;const rect=this.host.getBoundingClientRect();this.w=rect.width;this.h=rect.height;if(this.w<1||this.h<1)return;this.renderer.setPixelRatio(Math.min(devicePixelRatio,state.variant==='C'?1.25:1.5));this.renderer.setSize(this.w,this.h,false);this.invalidate();}
  private positionCamera(){const aspect=this.w/this.h;let height=state.variant==='C'?10.8:19.4;if(aspect<1.1)height=30;this.camera.left=-height*aspect/2;this.camera.right=height*aspect/2;this.camera.top=height/2;this.camera.bottom=-height/2;this.camera.zoom=state.zoom;this.camera.updateProjectionMatrix();
   if(this.followId){const a=this.agents.get(this.followId);if(a){
@@ -288,17 +315,18 @@ export class TownScene {
    // One purposeful sample errand. Reading and coordination normally happen indoors.
    let x=r.x,z=r.z+.35,angle=Math.PI,moving=false,location='Inside home';
    if(r.id==='scout'&&working&&road?.points.length&&a.phase>5&&a.phase<27){
-    const t=a.phase-5,f=t<8?t/8:t<12?1:1-(t-12)/10,p=pointOnPath(road.points,f);x=p.x;z=p.z;angle=p.angle+(t>=12?Math.PI:0);moving=t<8||t>=12;location=t<8?'Taking findings to Atlas':t<12?'Handoff at mayor hub':'Returning home';
+    const t=a.phase-5,f=t<8?t/8:t<12?1:1-(t-12)/10,p=pointOnPath(road.points,f);x=p.x;z=p.z;angle=p.angle+(t>=12?Math.PI:0);moving=t<8||t>=12;location=t<8?'Taking findings to '+residentName(resident('mayor')):t<12?'Handoff at mayor hub':'Returning home';
    }
    const previous=this.walking[r.id];if((r.activity==='Paused'||r.activity==='Pausing'||state.paused)&&previous){x=previous.x;z=previous.z;location=previous.location;angle=a.root.rotation.y;moving=false;}
    a.root.visible=location!=='Inside home'||state.peek===r.id;a.root.position.set(x,0,z);a.root.rotation.y=angle;
    if(r.activity!=='Paused'&&r.activity!=='Pausing'&&!state.paused)poseAgent(a,this.elapsed,moving&&running,r.activity);
    this.walking[r.id]={x,z,moving:moving&&running,location};
   }
-  const owner=this.agents.get('chief')!,atHome=Math.hypot(this.chiefAt[0]-chief.x,this.chiefAt[1]-chief.z)<.4;
-  owner.root.position.set(this.chiefAt[0],0,this.chiefAt[1]);owner.root.visible=state.peek==='chief'||!atHome;
-  if(running)poseAgent(owner,this.elapsed,false,'Coordinating');this.walking.chief={x:this.chiefAt[0],z:this.chiefAt[1],moving:false,location:atHome?'Inside sanctuary':'Visiting'};
-  if(this.teleportPortal){const left=(this.portalUntil-performance.now())/1100;this.teleportPortal.visible=left>0&&!state.quiet&&!state.paused;this.teleportPortal.position.set(atHome?chief.x+1.7:this.chiefAt[0],.04,atHome?chief.z+1.65:this.chiefAt[1]);this.teleportPortal.scale.setScalar(1+(1-Math.max(0,left))*.3);}
+  const owner=this.agents.get('chief')!,homeDoor=door(chief),atHome=Math.hypot(this.chiefAt[0]-homeDoor[0],this.chiefAt[1]-homeDoor[1])<.5;
+  owner.root.position.set(this.chiefAt[0],0,this.chiefAt[1]);owner.root.visible=true;
+  if(running)poseAgent(owner,this.elapsed,false,'Coordinating');
+  this.walking.chief={x:this.chiefAt[0],z:this.chiefAt[1],moving:false,location:atHome?'Sanctuary terrace':'Visiting'};
+  if(this.teleportPortal){const left=(this.portalUntil-performance.now())/1100;this.teleportPortal.visible=left>0&&!state.quiet&&!state.paused;this.teleportPortal.position.set(this.chiefAt[0],.04,this.chiefAt[1]);this.teleportPortal.scale.setScalar(1+(1-Math.max(0,left))*.3);}
   if(!this.completedInitial&&this.elapsed>2&&state.townId==='afterlight'&&state.phase==='working'){this.completedInitial=true;if(!this.initialTowns.has(state.townId)){this.initialTowns.add(state.townId);this.beginDelivery();}}
   if(state.courierSerial!==this.deliveredSerial){this.deliveredSerial=state.courierSerial;this.beginDelivery();}
   if(this.courier){this.courier.visible=!!this.delivery;if(this.delivery){const d=this.delivery;if(running)d.elapsed+=dt;const p=pointOnPath(d.points,d.elapsed/d.duration);this.courier.position.set(p.x,.04,p.z);this.courier.rotation.y=p.angle;
@@ -308,13 +336,22 @@ export class TownScene {
   for(const [id,b] of this.bubbles)if(b.until<this.elapsed||!state.chatter||state.quiet)this.bubbles.delete(id);
  }
  private project(x:number,y:number,z:number){const p=new T.Vector3(x,y,z).project(this.camera);return {x:(p.x+1)*this.w/2,y:(1-p.y)*this.h/2,visible:p.z<1&&Math.abs(p.x)<1.1&&Math.abs(p.y)<1.1};}
+ syncOverlay(){if(this.ready&&this.agents.size)this.updateLabels();}
  private updateLabels(){for(const r of [...activeResidents(),chief]){
-  const label=this.labels.querySelector<HTMLElement>(r.id==='chief'?'[data-action="chief"]':`[data-select="${r.id}"]`),name=this.labels.querySelector<HTMLElement>(`[data-follow="${r.id}"]`),a=this.agents.get(r.id)!;
-  if(label){label.setAttribute('aria-label',r.id==='chief'?'Chief headquarters':`Inspect ${r.name}, ${r.role}, ${r.activity}`);const p=this.project(r.x,.1,r.z+r.depth/2+.65);label.style.left=p.x+'px';label.style.top=(p.y+6)+'px';label.hidden=!p.visible||(state.variant==='C'&&r.id!=='mayor');label.classList.toggle('selected',state.selected===r.id||r.id==='chief'&&state.panel==='chief');label.classList.toggle('attention',r.activity==='Needs approval');label.querySelector('.status-dot')?.classList.toggle('active',['Reading','Researching','Coordinating','Review'].includes(r.activity));}
-  if(name){const p=this.project(a.root.position.x,1.75,a.root.position.z);name.style.left=p.x+'px';name.style.top=p.y+'px';name.hidden=!p.visible||!a.root.visible||state.variant==='C';}
+  const label=this.labels.querySelector<HTMLElement>(r.id==='chief'?'[data-inspect-home="chief"]':`[data-select="${r.id}"]`),name=this.labels.querySelector<HTMLElement>(`[data-follow="${r.id}"]`),a=this.agents.get(r.id)!;
+  if(label){label.setAttribute('aria-label',r.id==='chief'?'Chief headquarters':`Inspect ${residentName(r)}, ${r.role}, ${r.activity}`);const p=this.project(r.x,.1,r.z+r.depth/2+.65);label.style.left=p.x+'px';label.style.top=(p.y+6)+'px';label.hidden=!p.visible||(state.variant==='C'&&r.id!=='mayor');label.classList.toggle('selected',state.selected===r.id||r.id==='chief'&&state.panel==='chief');label.classList.toggle('attention',r.activity==='Needs approval');label.querySelector('.status-dot')?.classList.toggle('active',['Reading','Researching','Coordinating','Review'].includes(r.activity));}
+  if(name){const p=this.project(a.root.position.x,1.75,a.root.position.z);name.style.left=p.x+'px';name.style.top=p.y+'px';name.hidden=r.id==='chief'||!p.visible||!a.root.visible||state.variant==='C';}
   const bubble=this.labels.querySelector<HTMLElement>(`[data-bubble="${r.id}"]`),b=this.bubbles.get(r.id);
   if(bubble){const outdoors=a.root.visible,p=this.project(outdoors?a.root.position.x:r.x,outdoors?2:r.height+1.1,outdoors?a.root.position.z:r.z);bubble.hidden=!b||!p.visible||state.variant==='C';bubble.textContent=b?.text||'';bubble.style.left=p.x+'px';bubble.style.top=p.y+'px';}
- }}
+ }
+  const marker=this.chiefMarker,p=this.project(this.chiefAt[0],2.3,this.chiefAt[1]),bounds=this.host.getBoundingClientRect();
+  const edge=p.x<45||p.x>this.w-45||p.y<40||p.y>this.h-50;
+  let x=bounds.x+Math.max(45,Math.min(this.w-45,p.x)),y=bounds.y+Math.max(40,Math.min(this.h-50,p.y));
+  const panel=document.querySelector('.inspector')?.getBoundingClientRect();
+  if(panel&&x+30>panel.left&&x-30<panel.right&&y>panel.top&&y-34<panel.bottom){x=panel.left+40;y=panel.top+48;}
+  marker.style.left=x+'px';marker.style.top=y+'px';marker.classList.toggle('at-edge',edge);marker.title=edge?'Chief is outside this view. Click to find.':'Chief. Click to focus.';
+
+ }
  private scheduleClock(){clearTimeout(this.clockTimer);if(document.hidden||state.clockMode==='fixed')return;this.clockTimer=window.setTimeout(()=>{this.lastLight=Number.NEGATIVE_INFINITY;this.invalidate();this.scheduleClock();},state.clockMode==='accelerated'?(state.quiet?10000:1000):30000);}
  private invalidate(){this.lastLabels=0;clearTimeout(this.timer);if(!document.hidden&&this.ready&&this.w>0&&this.h>0)this.frame();}
  private frame(){if(!this.ready||document.hidden)return;const start=performance.now(),dt=Math.min(2,(start-this.last)/1000);this.last=start;const lightState=JSON.stringify([state.clockMode,state.lighting,state.clockOrigin]);if(lightState!==this.lightState||start-this.lastLight>(state.clockMode==='accelerated'?900:30000)){this.lightState=lightState;this.updateLighting();this.lastLight=start;}this.animate(dt);this.positionCamera();this.renderer.render(this.scene,this.camera);if(start-this.lastLabels>90){this.updateLabels();this.lastLabels=start;}this.frames++;const ms=performance.now()-start;this.frameMs+=ms;this.maxFrameMs=Math.max(this.maxFrameMs,ms);
