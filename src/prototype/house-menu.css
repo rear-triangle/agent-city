@@ -69,3 +69,62 @@
 :root[data-theme=shadow] .camera-navigation{font-weight:400}
 .variant-C .camera-navigation{bottom:12px;left:12px}
 @media(max-width:580px){.camera-navigation{bottom:12px;left:12px;font-size:12px}.camera-navigation>summary{padding:5px 8px}.camera-navigation-menu{width:230px}.camera-navigation-menu{max-height:210px;overflow-y:auto}}
+
+/* Work is the primary resident view; room inspection is a secondary text action. */
+:root .agent-activity-menu .resident-profile{position:relative;gap:11px;flex-wrap:wrap;margin-bottom:21px}
+:root .agent-activity-menu .resident-profile h2{font-size:28px}
+:root .agent-activity-menu .resident-profile p{margin-bottom:0}
+.activity-badge{margin-left:auto;align-self:flex-start;font-size:11px;color:var(--muted);max-width:95px;text-align:right;line-height:1.2;padding-top:5px}
+.activity-badge.working{color:var(--accent)}.activity-badge.attention{color:var(--amber)}
+.agent-current-work{margin:0 0 20px}
+:root .agent-current-work h3{font-size:23px;line-height:1.2;margin:10px 0 12px;color:var(--text)}
+:root .agent-current-work p{font-size:14px;line-height:1.4;margin:0;color:var(--muted)}
+.agent-latest{display:flex;gap:10px;padding:14px 0;margin:0 0 17px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.agent-latest>span{color:var(--accent);padding-top:2px}.agent-latest .icon{width:15px;height:15px}
+.agent-latest small{font-size:9px;letter-spacing:.7px;color:var(--muted)}
+:root .agent-latest p{font-size:13px;line-height:1.35;margin:5px 0 0;color:var(--text)}
+.agent-knowledge-links{display:flex;border:1px solid var(--line);margin:2px 0 17px}
+.agent-knowledge-links button{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;padding:10px 8px;font-size:14px;color:var(--accent)}
+.agent-knowledge-links button+button{border-left:1px solid var(--line)}
+.agent-knowledge-links .icon{width:14px;height:14px}.agent-knowledge-links button>span{font-size:11px;color:var(--muted)}
+.agent-secondary-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.agent-secondary-actions button{display:flex;gap:5px;align-items:center;font:500 12px var(--ui-font);color:var(--muted);padding:4px 0;min-height:25px}
+.agent-secondary-actions .icon{width:13px;height:13px}
+.agent-secondary-actions button:last-child{padding-left:5px}
+:root[data-theme=shadow] .agent-current-work h3{font-weight:400;font-size:25px}
+:root[data-theme=shadow] .agent-secondary-actions button{font-weight:400;font-size:14px}
+:root[data-theme=shadow] .agent-latest small{letter-spacing:.9px;font-size:10px}
+:root .inspector.agent-activity-menu{width:320px}
+.brief-panel.variant-A:has(.agent-activity-menu) .canvas-host{right:235px}
+@media(max-width:580px){
+ :root .inspector.agent-activity-menu{width:auto;max-height:430px}
+ .brief-panel:has(.agent-activity-menu){--house-menu-height:clamp(330px,44vh,390px)}
+ .brief-panel.variant-A:has(.agent-activity-menu) .canvas-host{right:0}
+ :root .agent-activity-menu .resident-profile{margin-bottom:16px}
+ .agent-current-work{margin-bottom:15px}:root .agent-current-work h3{font-size:22px;margin:8px 0 9px}
+ .agent-latest{padding:11px 0;margin-bottom:13px}
+ :root .agent-latest p{font-size:12px}.agent-knowledge-links{margin-bottom:11px}
+ .activity-badge{max-width:82px;font-size:10px}
+}
+@media(max-width:580px){
+ :root[data-theme] .agent-activity-menu .inspector-header{min-height:53px;padding:14px 16px 8px}
+ :root[data-theme] .agent-activity-menu .inspector-scroll{padding:10px 18px 14px}
+ :root[data-theme] .agent-activity-menu .resident-profile{margin-bottom:12px}
+ :root[data-theme] .agent-activity-menu .avatar.large{width:34px;height:45px}
+ :root[data-theme] .agent-activity-menu .resident-profile h2{font-size:26px;line-height:1.1}
+ :root[data-theme] .agent-activity-menu .resident-profile p{font-size:12px;line-height:1.3}
+ :root[data-theme] .agent-activity-menu .agent-current-work h3{font-size:22px;line-height:1.15;margin:7px 0 8px}
+ :root[data-theme] .agent-activity-menu .agent-current-work p{font-size:13px;line-height:1.35}
+ :root[data-theme] .agent-activity-menu .agent-latest{padding:9px 0;margin-bottom:12px}
+ :root[data-theme] .agent-activity-menu .agent-latest p{font-size:12px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ :root[data-theme] .agent-activity-menu .agent-latest small{font-size:9px}
+ :root[data-theme] .agent-activity-menu .agent-knowledge-links{margin-bottom:8px}
+ :root[data-theme] .agent-activity-menu .agent-knowledge-links button{padding:8px;font-size:13px}
+}
+
+.inspector-fixed-footer{flex-shrink:0;padding:0 21px 20px;position:relative;z-index:2}
+.agent-activity-menu .inspector-fixed-footer{border-top:1px solid var(--line);padding-top:13px}
+@media(max-width:580px){.agent-activity-menu .inspector-fixed-footer{padding:9px 18px 12px}:root[data-theme] .agent-activity-menu .agent-knowledge-links{margin-top:0}}
+
+.agent-queue-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;font-size:12px;color:var(--muted)}
+.agent-queue-summary button{display:flex;align-items:center;gap:5px;color:var(--accent)}.agent-queue-summary .icon{width:12px;height:12px}

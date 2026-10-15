@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | Cyberpunk buildings, roofs, equipment, terrain, and streets | Original procedural geometry in `src/prototype/scene.ts` | Included as source. No extracted game assets. |
 | Solo Leveling-inspired citadel, chambers, spires, and rune courts | Original procedural geometry in `src/prototype/scene.ts` | Included as source. No extracted game assets. |
-| Articulated cyberpunk residents and shadow-armored residents | Original meshes and poses in `src/prototype/characters.ts` | Included as source. These are role-specific original characters. |
+| Rounded cyberpunk residents and distinct shadow silhouettes | Original meshes and poses in `src/prototype/characters.ts` | Included as source. These are original stylized interpretations with procedural faces, clothing, and role equipment. |
 | Resident portraits | Original SVG in `src/prototype/main.ts`, with silhouettes and equipment matched to the models | Included as source. |
 | Interface icons and favicon | Original SVG path definitions | Included as source. |
 | Rajdhani, weights 500 and 700 | Google Fonts, `google/fonts/ofl/rajdhani` | SIL Open Font License in `src/prototype/fonts/Rajdhani-OFL.txt`. |
@@ -28,3 +28,5 @@ Revision 5 uses four further Solo Leveling reference images for notification fra
 Revision 6 applies the owner’s font selection to both DOM text and generated building signs. Canvas signs wait for the theme fonts before drawing. Orbitron adds a 38.6 kB bundled variable font. No font service is contacted at runtime.
 
 Revision 7 reuses the original window artwork and character geometry for compact house menus, a persistent Chief marker, and a static ground ring. The [official Season 2 shadow visuals](https://sololeveling-anime.net/special/shadows-visual/) informed the owner-requested naming roster. Names are display aliases. No official character images, models, or costumes were downloaded or included.
+
+Revision 9 replaces block-shaped character construction with rounded procedural forms and original face and silhouette details. Named-shadow cues are interpretations of the owner’s existing references. No official character model, costume texture, sprite, or image was extracted. Static geometry merges use Three.js BufferGeometryUtils from the existing dependency. SVG portraits remain original code. The character-sheet evidence is a temporary browser render of the actual models, separate from the product UI.

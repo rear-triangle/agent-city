@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 8 adds grab-based map panning, orbit tilt, and a collapsed navigation guide. Revision 7 adds persistent Chief visibility, click-to-teleport travel, compact house menus, and Solo Leveling resident names with Igris as mayor. Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 9 refines character geometry and makes agent activity the default inspector, with direct Skills and Memory access. Revision 8 adds grab-based map panning, orbit tilt, and a collapsed navigation guide. Revision 7 adds persistent Chief visibility, click-to-teleport travel, compact house menus, and Solo Leveling resident names with Igris as mayor. Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 8 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 9 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -40,6 +40,31 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M4 native workflow | Not started. Browser composition is not a native overlay. |
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
+
+## Revision 9 characters and activity
+
+The default resident inspector now leads with its task, current status, and latest exchange. Running task titles come from the task record. Waiting, planned work, and resting states are labeled separately. Skills and Memory have direct footer buttons; that footer stays outside the scrolling activity region. Look inside is a small secondary text action. The details arrow retains queue, equipment, history, and interruption controls. Newly queued work returns to the activity view, where Run next demo task updates the displayed task and status.
+
+Character construction now uses smooth ellipsoids, tapered helmets, rounded limbs, facial features, hair, coat panels, and role accessories. Named shadows have different silhouettes. Original SVG portraits use matching cues. Construction geometry is shared, and static parts merge per joint and material. The Chief's visibility pass now retains depth between its own body and facial parts instead of flattening all overlapping geometry. Room focus starts from the resident's facing direction, with existing obstruction avoidance.
+
+| Browser check | Observed outcome |
+| --- | --- |
+| Activity hierarchy | The reader showed its task, Reading status, and latest received exchange. Look inside appeared in the footer as a secondary text action. |
+| Direct details | Skills opened Source extraction and Citation tracking. Memory opened the same two stored notes. Back to activity restored the compact work view. |
+| Queue | Assigning Review the new character silhouettes returned to the activity view with one queued task. Run next demo task changed its record to Running and displayed that exact title. |
+| Small viewport | At 390 × 844, both themes kept Skills and Memory visible outside the scroller. The critic's waiting reason and Review request action remained available. Checked buttons and document width had no horizontal overflow. |
+| Characters | All eight starter characters were reviewed together in a temporary browser character sheet. Tusk and a Cyberpunk reader were checked in room cutaways with the Chief visible. The sheet is evidence, not another product screen. |
+| Quiet mode | A fixed-light 1.1-second interval added zero rendered frames. The Chief remained visible. |
+| Build | TypeScript and Vite passed. The existing renderer-chunk warning remains. |
+
+Model counts below describe all seven starter residents plus the Chief, before the scene's extra Chief marker ring. Mesh count is not a frame-rate measurement.
+
+| Model cohort | Previous meshes | Revised meshes | Previous triangles | Revised triangles |
+| --- | ---: | ---: | ---: | ---: |
+| Cyberpunk | 223 | 219 | 23,372 | 50,915 |
+| Solo Leveling | 238 | 208 | 23,384 | 36,077 |
+
+Higher polygon counts improve the silhouettes and faces. Most actors remain hidden indoors, and no character shadow maps or texture downloads were added. The temporary eight-character shadow sheet rendered 209 calls and 36,079 triangles including its two-triangle floor. The sheet used neutral review lighting, so it does not establish in-app performance. Native memory, CPU, and GPU gates remain pending.
 
 ## Revision 8 camera checks
 
