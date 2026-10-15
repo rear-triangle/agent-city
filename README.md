@@ -54,7 +54,15 @@ These controls preview responses to demand. They do not implement an autonomous 
 6. From the Chief panel, choose **Send a demo courier**. A small robot carries a source index from Nyx to Sage through the mayor hub. **Activity** records its progress and delivery. Replanning or switching themes interrupts a visible delivery in this throwaway scene.
 7. Occasional speech bubbles describe an activity or a character quirk. These are scripted, require no model calls, and show at most two lines at once. Turn **Resident chatter** off in Settings, or use Quiet mode.
 
-Solo Leveling uses Abel, a locally bundled narrow sans-serif font, and translucent System windows based on the supplied menu references. Its illuminated rails, inset labels, geometric linework, framed actions, status tabs, and notifications differ from the Cyberpunk cut panels, yellow signals, and Rajdhani lettering. The font and artwork are original choices for this prototype, not extracted anime assets.
+Solo Leveling uses Abel, a locally bundled narrow sans-serif font, and translucent System windows based on the supplied menu references. Its illuminated rails, inset labels, geometric linework, framed actions, status tabs, and notifications differ from the Cyberpunk red frames, cyan selections, angular controls, and condensed Rajdhani lettering. Cyberpunk Skills also shows a hexagonal diagram of the resident's actual accepted procedures. The font and artwork are original choices for this prototype, not extracted anime assets.
+
+## Review the Cyberpunk reference pass
+
+Open [the Cyberpunk city](http://localhost:5173/prototype/?variant=A&theme=cyber). The revised city has layered street fronts, shop awnings, neon signs, service pipes, rooftop equipment, overhead cables, lanterns, and a denser background skyline. Indoor cutaways have backlit wall panels and workstation details.
+
+The menus use red outlines and labels, cyan selected controls, notched buttons, and framed OFF/ON toggles based on the supplied game menu references. Select Atlas, then **Skills**, to inspect the hexagonal procedure display. It shows accepted skills without inventing game levels or additional permissions.
+
+For the night lighting study, open **Settings** and choose **Fixed light** with the night preset. Return to **Local time** afterward. The default follows your computer clock. Two unshadowed colored lights provide the street illumination. Signs use small canvas textures, and the rest is procedural geometry. No new runtime library or downloaded image asset was added for this pass.
 
 ## Watch time and pause
 

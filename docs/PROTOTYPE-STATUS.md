@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 3 adds the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 4 applies the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -11,7 +11,7 @@ Revision 3 adds the Chief, indoor work, intentional trips, scripted speech, and 
 | More depth | Actual orthographic 3D with real geometry, shadows, orbit, zoom, and follow camera. |
 | Visible agents | Residents work indoors with furnished cutaways. Nyx makes a finite example errand. A message robot and the Chief travel generated roads for specific handoffs and visits. |
 | Time-based change | Local computer time is the default. Gradual lighting has a 90-second preview and an explicit fixed-light override. The clock runs independently of task pause. |
-| Full themes | Cyberpunk uses Rajdhani, cut panels, yellow rules, and technical spacing. Solo Leveling uses Abel narrow sans-serif, translucent blue System windows, luminous rails, inset menu labels, geometric linework, shadow armor, and different architecture. |
+| Full themes | Cyberpunk uses condensed Rajdhani, red frames, cyan selections, angular buttons, framed toggles, and hexagonal skill displays. Solo Leveling uses Abel narrow sans-serif, translucent blue System windows, luminous rails, inset menu labels, geometric linework, shadow armor, and different architecture. |
 | Generated roads | A grid pathfinder routes around home and annex footprints. Seeded layout changes and population changes rebuild geometry. Permission relationships do not come from the drawn path. |
 | Substantial characters | Original 3D bodies have articulated limbs, coats or capes, armor, boots, visors or helmets, and role equipment. Portraits use matching visual cues. |
 | Evolution and devolution | Work-arrival and work-settlement fixtures add or retire homes and annexes. Recall preserves identity and notes. Consolidation excludes the mayor and residents with unfinished work. Inactivity causes no penalty. |
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 3 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 4 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -40,6 +40,30 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M4 native workflow | Not started. Browser composition is not a native overlay. |
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
+
+## Revision 4 browser observations
+
+The Cyberpunk reference pass remains on the prototype branch and awaits design approval. The new street and room details are procedural. No source screenshot, game logo, character model, or extracted game UI asset is included.
+
+| Check | Observed outcome |
+| --- | --- |
+| Menus | Red borders and inactive labels, cyan selections, notched buttons, framed OFF/ON switches, and condensed Rajdhani throughout the Cyberpunk interface. |
+| Skills | Atlas has a hexagonal display of Task planning, Evidence synthesis, and Delegation, backed by the same accepted skill list. |
+| City | Layered awnings, balcony rails, signboards, utility pipes, roof vents, overhead cables, lanterns, market stands, and background towers. Street geometry still comes from the existing pathfinder. |
+| Lighting | Local time remains the default. The fixed night study shows cyan and red street illumination. Clock-mode and fixed-preset changes now redraw lighting immediately. |
+| Interior | A furnished cutaway includes a backlit wall strip, warm wall panel, desk, seat, and utility cable. |
+| Quiet | Zero additional frames across a 1.1-second fixed-light check, with motion scheduling disabled. |
+| Theme isolation | Solo Leveling retained Abel and its translucent framed controls. The seven resident keys remained equal after switching back to Cyberpunk. |
+| Mobile | Page width equals the 390-pixel viewport. The framed switches and menu content remain within the scrollable inspector. |
+| Layouts | B retained the 838 by 678 map alongside command content. C retained its 458 by 308 compact map. |
+| Label positioning | Explicit redraws now reposition world labels immediately when an inspector or viewport changes the map size. |
+| Build | TypeScript and Vite passed. The existing large-chunk warning remains. No release resource gate is claimed. |
+
+This pass adds two unshadowed point lights and static geometry. It adds no bloom pipeline, particle loop, image downloads, runtime libraries, or font files. Signs use small generated canvas textures. Native CPU, GPU, and memory budgets still need the full-build profiling gates.
+
+Current transfer sizes are about 669 kB JavaScript before compression, 179 kB compressed, and 20 kB compressed CSS. Fonts remain about 53 kB. One night-view observation had 319 draw calls and about 136,000 triangles. These are browser renderer counters, not native process measurements.
+
+Revision 4 captures are `cyberpunk-reference-night.png`, `cyberpunk-reference-day.png`, `cyberpunk-reference-skills.png`, `cyberpunk-reference-interior.png`, and `cyberpunk-reference-mobile.png` in `docs/evidence/`.
 
 ## Revision 3 browser observations
 

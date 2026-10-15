@@ -18,3 +18,5 @@ The previous 2.5D experiment remains in `src/prototype/scene-2d.ts` for source c
 Fonts are local WOFF2 and TTF files. Sign textures are small canvases drawn by the application. There are no downloaded building textures, character models, or runtime font-service requests.
 
 The owner supplied further Hamlet scenes and Solo Leveling menu screenshots on 2026-10-15. They guide inhabitance, Chief interactions, narrow sans typography, translucent windows, and blue framing. The screenshots do not ship in the application. Earlier serif font experiments remain in Git history.
+
+The owner also supplied eight Cyberpunk menu, city-street, circuit-frame, and apartment references. Revision 4 uses their red/cyan menu hierarchy, angular controls, condensed lettering, hexagonal skill composition, layered streets, utility details, neon signage, and lantern lighting as visual guidance. The implementation is CSS, original procedural geometry, and application-drawn sign textures. No reference screenshots or extracted game assets ship in the app. Rajdhani is retained as the locally licensed approximation for this menu direction.
