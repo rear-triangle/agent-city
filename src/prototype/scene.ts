@@ -75,7 +75,7 @@ export class TownScene {
  private sign(parent:T.Object3D,text:string,x:number,y:number,z:number,w:number,color:string){
   const shadow=state.theme==='shadow',canvas=document.createElement('canvas');canvas.width=512;canvas.height=112;const c=canvas.getContext('2d')!;
   c.fillStyle=shadow?'#102449':'#08151e';c.fillRect(0,0,512,112);c.strokeStyle=color;c.lineWidth=2;c.strokeRect(5,5,502,102);c.globalAlpha=.35;c.strokeRect(12,12,488,88);c.globalAlpha=1;
-  c.fillStyle=color;c.shadowColor=color;c.shadowBlur=shadow?0:13;c.font=shadow?'38px Abel, sans-serif':'700 40px Rajdhani, sans-serif';c.textAlign='center';c.fillText(text,256,70,475);
+  c.fillStyle=color;c.shadowColor=color;c.shadowBlur=shadow?0:13;c.font=shadow?'38px "Friend or Foe Tall BB", Abel, sans-serif':'700 40px Rajdhani, sans-serif';c.textAlign='center';c.fillText(text,256,70,475);
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;const m=new T.Mesh(new T.PlaneGeometry(w,w*112/512),new T.MeshBasicMaterial({map:texture,toneMapped:false}));m.position.set(x,y,z);parent.add(m);return m;
  }
  private beam(parent:T.Object3D,a:T.Vector3,b:T.Vector3,r:number,color:string){const m=new T.Mesh(this.geometries.cylinder,this.material(color));m.position.copy(a).add(b).multiplyScalar(.5);m.scale.set(r,a.distanceTo(b),r);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),b.clone().sub(a).normalize());parent.add(m);return m;}

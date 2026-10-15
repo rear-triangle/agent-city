@@ -54,7 +54,7 @@ These controls preview responses to demand. They do not implement an autonomous 
 6. From the Chief panel, choose **Send a demo courier**. A small robot carries a source index from Nyx to Sage through the mayor hub. **Activity** records its progress and delivery. Replanning or switching themes interrupts a visible delivery in this throwaway scene.
 7. Occasional speech bubbles describe an activity or a character quirk. These are scripted, require no model calls, and show at most two lines at once. Turn **Resident chatter** off in Settings, or use Quiet mode.
 
-Solo Leveling uses Abel, a locally bundled narrow sans-serif font, and translucent System windows based on the supplied menu references. Its illuminated rails, inset labels, geometric linework, framed actions, status tabs, and notifications differ from the Cyberpunk red frames, cyan selections, angular controls, and condensed Rajdhani lettering. Cyberpunk Skills also shows a hexagonal diagram of the resident's actual accepted procedures. The font and artwork are original choices for this prototype, not extracted anime assets.
+Solo Leveling uses the owner's installed Friend or Foe Tall BB (with bundled Abel as a fallback), and translucent System windows based on the supplied menu references. Its illuminated rails, inset labels, geometric linework, framed actions, status tabs, and notifications differ from the Cyberpunk red frames, cyan selections, angular controls, and condensed Rajdhani lettering. Orbitron is reserved for secondary metadata. Cyberpunk Skills also shows a hexagonal diagram of the resident's actual accepted procedures. The artwork is original; no extracted anime assets ship in the prototype. Friend or Foe Tall BB is resolved through the local font installation and its binary is not included.
 
 ## Review the Player menu and private sanctuary
 
@@ -97,7 +97,7 @@ Arrow keys change layouts unless a form field or dialog has focus. Escape closes
 npm run build
 ```
 
-This checks TypeScript and builds the static frontend. The 3D revision adds one runtime library, Three.js. Geometry and characters are procedural, and repeated static primitives are instanced. Fonts are bundled locally. No model, image, font-service, or analytics requests run in the application.
+This checks TypeScript and builds the static frontend. The 3D revision adds one runtime library, Three.js. Geometry and characters are procedural, and repeated static primitives are instanced. Open fonts are bundled locally; Friend or Foe Tall BB uses the local system installation. No model, image, font-service, or analytics requests run in the application.
 
 The production build hides the design switcher. Use the development preview for layout review.
 

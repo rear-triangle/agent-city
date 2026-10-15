@@ -10,7 +10,7 @@ h1,h2,h3,h4,.brand,.owner-avatar{font-family:var(--display-font)}
 
 @media(max-width:580px){.town-heading h1{font-size:36px;max-width:220px}.workspace-footer>div:first-child{display:block;max-width:155px;line-height:1.5}.workspace-footer .footer-separator{display:inline!important;margin:0 4px}.workspace-footer .local-dot{margin-right:5px}:root[data-theme=shadow] .town-heading h1{font-size:30px}}
 /* Solo Leveling reference study: narrow sans type, translucent System windows, luminous blue rails. */
-:root[data-theme=shadow]{--ui-font:'Abel',Arial,sans-serif;--display-font:'Abel',Arial,sans-serif;--accent:#a5eaff;--accent-ink:#e0faff;--accent-soft:#2eabff17;--panel:#061627e8;--line:#71caff38;--text:#d5eefa;--muted:#82a9c6;--amber:#efd1a7;font-family:var(--ui-font);font-weight:400}
+:root[data-theme=shadow]{--ui-font:'Friend or Foe Tall BB','Abel',Arial,sans-serif;--display-font:'Friend or Foe Tall BB','Abel',Arial,sans-serif;--accent:#a5eaff;--accent-ink:#e0faff;--accent-soft:#2eabff17;--panel:#061627e8;--line:#71caff38;--text:#d5eefa;--muted:#82a9c6;--amber:#efd1a7;font-family:var(--ui-font);font-weight:400}
 :root[data-theme=shadow] .brand{font:400 24px var(--ui-font);letter-spacing:2px;text-transform:uppercase;color:#d9f6ff}
 :root[data-theme=shadow] .brand-light{color:#8cbfdc}:root[data-theme=shadow] .header-center{letter-spacing:2px;color:#84a6bc}:root[data-theme=shadow] .app-header{background:#06121fe8;border-bottom-color:#50a4cf55}
 :root[data-theme=shadow] .theme-switch{border:1px solid #66c4e950;border-radius:0}:root[data-theme=shadow] .theme-switch button{border-radius:0;font-weight:400;letter-spacing:1px}:root[data-theme=shadow] .theme-switch button.is-active{background:#347ba727;box-shadow:inset 0 0 9px #78dbff21}

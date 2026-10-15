@@ -31,6 +31,8 @@ app.innerHTML=`<div class="app-shell">
  <div class="toast" id="toast" role="status" aria-live="polite"></div>
  <div id="modal-slot"></div>
 </div>`;
+// Canvas signs must be drawn after the same theme faces used by the DOM are ready.
+await Promise.all(['400 16px "Friend or Foe Tall BB"','400 16px Abel','500 16px Rajdhani','700 16px Rajdhani'].map(font=>document.fonts.load(font).catch(()=>[])));
 const scene=new TownScene(document.querySelector('#scene')!);
 Object.assign(window,{__agentCityPrototype:{state,residents,exchanges,towns,rendererStats:()=>scene.stats()}});
 Object.assign(window,{__townPrototype:(window as unknown as Record<string,unknown>).__agentCityPrototype});

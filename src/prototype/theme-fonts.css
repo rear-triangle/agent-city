@@ -14,3 +14,19 @@
 }
 
 @font-face{font-family:'Abel';font-style:normal;font-weight:400;font-display:swap;src:url(./fonts/abel-regular.ttf) format('truetype')}
+
+/* Use the owner's installed face; the commercial font binary is not redistributed. */
+@font-face {
+  font-family: 'Friend or Foe Tall BB';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('FriendorFoeTallBB'), local('Friend or Foe Tall BB'), local('☞Friend or Foe Tall BB');
+}
+@font-face {
+  font-family: 'Orbitron';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url(./fonts/orbitron-variable.ttf) format('truetype');
+}

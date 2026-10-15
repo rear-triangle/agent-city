@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -11,14 +11,14 @@ Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander 
 | More depth | Actual orthographic 3D with real geometry, shadows, orbit, zoom, and follow camera. |
 | Visible agents | Residents work indoors with furnished cutaways. Nyx makes a finite example errand. A message robot follows generated roads for handoffs. The Chief teleports directly from an isolated sanctuary. |
 | Time-based change | Local computer time is the default. Gradual lighting has a 90-second preview and an explicit fixed-light override. The clock runs independently of task pause. |
-| Full themes | Cyberpunk uses condensed Rajdhani, red frames, cyan selections, angular buttons, framed toggles, and hexagonal skill displays. Solo Leveling uses Abel narrow sans-serif, translucent blue System windows, luminous rails, inset menu labels, geometric linework, shadow armor, and different architecture. |
+| Full themes | Cyberpunk uses primary Rajdhani and secondary Orbitron, red frames, cyan selections, angular buttons, framed toggles, and hexagonal skill displays. Solo Leveling uses locally installed Friend or Foe Tall BB with an Abel fallback, translucent blue System windows, luminous rails, inset menu labels, geometric linework, shadow armor, and different architecture. |
 | Generated roads | A grid pathfinder routes around home and annex footprints. Seeded layout changes and population changes rebuild geometry. Permission relationships do not come from the drawn path. |
 | Substantial characters | Original 3D bodies have articulated limbs, coats or capes, armor, boots, visors or helmets, and role equipment. Portraits use matching visual cues. |
 | Evolution and devolution | Work-arrival and work-settlement fixtures add or retire homes and annexes. Recall preserves identity and notes. Consolidation excludes the mayor and residents with unfinished work. Inactivity causes no penalty. |
 
 ## Runtime and limits
 
-The prototype uses TypeScript, DOM controls, CSS, and Three.js 0.186.1. Vite 8.3.4, TypeScript 7.0.2, and Three.js types 0.186.0 are pinned development dependencies. Three.js is the only runtime library. Three locally bundled font files provide the two theme systems, totaling about 53 kB.
+The prototype uses TypeScript, DOM controls, CSS, and Three.js 0.186.1. Vite 8.3.4, TypeScript 7.0.2, and Three.js types 0.186.0 are pinned development dependencies. Three.js is the only runtime library. Four bundled open-font files total about 92 kB. Friend or Foe Tall BB uses the owner’s installed local face; its commercial binary is not redistributed.
 
 Repeated static primitives are instanced. Visible motion is capped at 24 fps in expanded views and 12 fps in the compact view. Indoor work without a cutaway falls back to two-second updates for optional chatter; settled scenes with no chatter stop motion callbacks. Quiet mode stops those animation callbacks. Changes and coarse clock updates can still redraw. Fixed lighting has no periodic renderer clock update. Hidden documents stop rendering callbacks and clock timers.
 
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 5 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 6 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -40,6 +40,12 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M4 native workflow | Not started. Browser composition is not a native overlay. |
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
+
+## Revision 6 typography checks
+
+The browser loaded the installed Friend or Foe Tall BB face for Solo Leveling and the bundled Orbitron face for Cyberpunk secondary text. Cyberpunk actions and main content retain Rajdhani. Building signs wait for fonts before drawing. Abel remains the portable fallback when the owner’s installed font is unavailable.
+
+At 1440 × 900 and 390 × 844, both themes had no horizontal document overflow. The inspected buttons and captions had no text overflow. The Player window was visually reviewed at both sizes. TypeScript and Vite passed; the existing renderer-chunk warning remains. Earlier observations below retain the fonts used at the time.
 
 ## Revision 5 browser observations
 
@@ -62,7 +68,7 @@ The latest Chief instruction supersedes the earlier road-based owner visits. The
 
 Revision 5 adds original SVG figures, static border artwork, CSS, and procedural estate geometry. No runtime library, font, or image download was added. The arrival rings animate briefly; their animation does not control provider state. Browser captures and a short teleport recording support review. Native performance gates remain pending.
 
-Current build transfer sizes are about 678 kB JavaScript before compression, 182 kB compressed, 23 kB compressed CSS, and 53 kB of local fonts. These are not process-memory measurements.
+Current build transfer sizes are about 678 kB JavaScript before compression, 182 kB compressed, 23 kB compressed CSS, and 92 kB of bundled fonts. These are not process-memory measurements.
 
 ## Revision 4 browser observations
 

@@ -1,5 +1,5 @@
 /* Reference-driven Cyberpunk study. Static CSS linework keeps the menu cheap to draw. */
-:root[data-theme=cyber]{--accent:#58e6ee;--accent-ink:#07171d;--accent-soft:#45cbd414;--signal:#ff6a60;--line:#e660523d;--panel:#110f1de8;--text:#e3e9e4;--muted:#9bafb4;--amber:#f3c969;--ui-font:'Rajdhani',sans-serif;--display-font:'Rajdhani',sans-serif;color:var(--text);background:#080e17}
+:root[data-theme=cyber]{--accent:#58e6ee;--accent-ink:#07171d;--accent-soft:#45cbd414;--signal:#ff6a60;--line:#e660523d;--panel:#110f1de8;--text:#e3e9e4;--muted:#9bafb4;--amber:#f3c969;--ui-font:'Rajdhani',sans-serif;--display-font:'Rajdhani',sans-serif;--secondary-font:'Orbitron',sans-serif;color:var(--text);background:#080e17}
 :root[data-theme=cyber] .app-header{background:linear-gradient(100deg,#32151bee,#081019f5 68%);border-bottom:1px solid var(--signal);box-shadow:0 1px 18px #ef514b14}
 :root[data-theme=cyber] .brand{color:#e8ef77;letter-spacing:1.2px;font-weight:700;transform:skew(-5deg)}:root[data-theme=cyber] .brand-light{color:#e5eedf;font-weight:500}:root[data-theme=cyber] .brand-period{color:var(--signal)}:root[data-theme=cyber] .brand>.icon{color:var(--signal)}
 :root[data-theme=cyber] .workspace-name{color:var(--accent);text-transform:uppercase;font-weight:700;letter-spacing:1px}:root[data-theme=cyber] .town-count{border-color:#ff74665c;color:var(--signal)}:root[data-theme=cyber] .header-center{color:#ec7669;letter-spacing:2px}:root[data-theme=cyber] .header-center .local-dot{background:var(--accent)}
@@ -28,3 +28,12 @@
 @media(max-width:700px){:root[data-theme=cyber] .brand{font-size:21px;gap:7px}:root[data-theme=cyber] .goal-summary h3{font-size:17px}:root[data-theme=cyber] .city-actions button{font-size:10px;padding:6px}:root[data-theme=cyber] .toggle{width:80px;height:27px}:root[data-theme=cyber] .toggle:before,:root[data-theme=cyber] .toggle:after{width:37px}:root[data-theme=cyber] .setting-row small{max-width:180px}:root[data-theme=cyber] .inspector-scroll h2{font-size:28px}:root[data-theme=cyber] .inspector-tabs button{font-size:13px}:root[data-theme=cyber] .theme-switch button{letter-spacing:0}:root[data-theme=cyber] .theme-switch button span{font-size:0}:root[data-theme=cyber] .theme-switch button.is-active span{font-size:9px}}
 
 :root[data-theme=cyber] .approval-actions .button{font-size:12px;letter-spacing:.4px;padding:8px;white-space:nowrap;min-height:37px}:root[data-theme=cyber] .approval-actions .button .icon{width:15px;height:15px}
+
+/* Primary controls and content stay in Rajdhani; Orbitron is reserved for metadata. */
+:root[data-theme=cyber] :is(.tiny-code,.header-center,.world-clock small,.map-overline,.map-legend,.identity-footer,.event-time,.town-count,.goal-bottom>span,.provider-line>span:last-child,.cyber-skill-node small){font-family:var(--secondary-font);font-weight:400;letter-spacing:.5px}
+:root[data-theme=cyber] .header-center{font-size:8px}
+:root[data-theme=cyber] .world-clock small{font-size:7px}
+:root[data-theme=cyber] .map-overline,:root[data-theme=cyber] .map-legend{font-size:8px}
+:root[data-theme=cyber] .town-count{font-size:8px}
+:root[data-theme=cyber] .goal-bottom>span,:root[data-theme=cyber] .provider-line>span:last-child{font-size:8px}
+:root[data-theme=cyber] .cyber-skill-node small{font-size:6px}
