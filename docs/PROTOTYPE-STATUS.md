@@ -1,91 +1,112 @@
-# Prototype status
+# Agent City prototype status
 
-The user requested a prototype for approval before the full build. This branch answers which layout, visual treatment, and interaction direction to carry forward. No production milestone is complete. Owner approval is pending.
+Revision 2 addresses the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
-## Scope
+## Corrections and behavior
 
-The prototype is TypeScript, DOM controls, CSS, and a Canvas 2D settlement. It has no runtime library dependencies. Vite 8.3.4 and TypeScript 7.0.2 are pinned development dependencies. Both fonts are local assets.
+| Owner feedback | Revised prototype |
+| --- | --- |
+| Name | Agent City throughout the product UI and package metadata. Town remains the name for a project settlement inside the city network. |
+| Additional towns | Create, name, and switch towns. Residents, notes, queues, approvals, demand, and stage are stored separately in memory. |
+| More depth | Actual orthographic 3D with real geometry, shadows, orbit, zoom, and follow camera. |
+| Visible agents | Articulated residents walk generated paths, work at a destination, and return. Paused and resting residents do not pace. |
+| Time-based change | Local computer time is the default. Gradual lighting has a 90-second preview and an explicit fixed-light override. The clock runs independently of task pause. |
+| Full themes | Cyberpunk uses Rajdhani, cut panels, yellow rules, and technical spacing. Solo Leveling uses Cinzel and Cormorant Garamond, blue System frames, shadow armor, and different architecture. |
+| Generated roads | A grid pathfinder routes around home and annex footprints. Seeded layout changes and population changes rebuild geometry. Permission relationships do not come from the drawn path. |
+| Substantial characters | Original 3D bodies have articulated limbs, coats or capes, armor, boots, visors or helmets, and role equipment. Portraits use matching visual cues. |
+| Evolution and devolution | Work-arrival and work-settlement fixtures add or retire homes and annexes. Recall preserves identity and notes. Consolidation excludes the mayor and residents with unfinished work. Inactivity causes no penalty. |
 
-Three layouts share the same in-memory state. Cyberpunk and Shadow domain have different architecture, resident presentation, couriers, ground treatment, and interface framing. Each includes three authored appearance stages. The scene caches its static artwork. Couriers run for a finite trace at a 24 fps cap in expanded views and a 12 fps cap in the compact view. Quiet mode has no animation loop. A visibility listener stops scheduled rendering when the document is hidden.
+## Runtime and limits
 
-This browser prototype does not implement a Rust core, Tauri shell, SQLite, a provider adapter, durable routing, persistent memory, OS window controls, or native diagnostics. It never launches inference or changes project files through its controls. Source edits and dependency installation are development work performed by the implementation agent.
+The prototype uses TypeScript, DOM controls, CSS, and Three.js 0.186.1. Vite 8.3.4, TypeScript 7.0.2, and Three.js types 0.186.0 are pinned development dependencies. Three.js is the only runtime library. Four locally bundled font files provide the two theme systems.
+
+Repeated static primitives are instanced. Work animations are capped at 24 fps in expanded views and 12 fps in the compact view. Quiet mode stops those animation callbacks. Changes and coarse clock updates can still redraw. Fixed lighting has no periodic renderer clock update. Hidden documents stop rendering callbacks and clock timers.
+
+Towns, layouts, and notes are actual interactive prototype state. They are not durable. Reload resets them. Task starts, demand events, approvals, and work results are simulated. No provider process or model is launched.
+
+The demand buttons replay example workload events. This is not a production automatic staffing policy. They demonstrate the physical response and retained history. The demo does not infer success from animation or grant permissions when capacity grows.
+
+No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native overlay, or application-wide resource measurement is implemented. The larger 3D bundle is a deliberate prototype tradeoff for the requested depth. The lightweight target is not considered passed.
 
 ## Milestones
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype | Implemented. Awaiting owner approval. |
-| M0 environment and provider proof | Deferred until prototype approval. Node verified; provider and native toolchains not probed. |
-| M1 domain core and durable state | Not started. The demo state is disposable. |
-| M2 communication and memory | UI concepts only. No durable broker or context preparation. |
-| M3 visual slices | Two 2.5D art directions available for review. Native budgets and 3D comparison pending. |
-| M4 native workflow | Not started. Browser compact composition only. |
-| M5 personal preview | Not started. Native packaging, durability, accessibility audit, and resource trials pending. |
-| M6 and M7 | Deferred as specified. |
+| Design prototype revision 2 | Interactive and browser checked. Awaiting owner review. |
+| M0 integration proof | Deferred until design approval. |
+| M1 durable domain | Not started. In-memory prototype state only. |
+| M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
+| M3 visual slices | Both 3D themes available. The previous 2.5D source is retained for comparison. Native resource and visual gates pending. |
+| M4 native workflow | Not started. Browser composition is not a native overlay. |
+| M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
+| M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
 
-## Verification record
+## Browser observations
 
-The 12 supplied references were inspected in a contact sheet generated with Pillow through `uv run --with pillow python`.
+Checks used T3 Code's collaborative browser at a 1440 by 900 CSS viewport and at 390 by 844. Saved screenshots can have a different raster size because the preview capture scales its output.
 
-Checks were performed on the development preview through T3 Code's collaborative browser at 1280 × 800 and at a 390 × 844 CSS viewport. These observations describe the browser prototype only.
-
-| Check | Observed result |
+| Check | Observed outcome |
 | --- | --- |
-| Open all three layouts | A, B, and C render and update the URL parameter. |
-| Switch visual themes | Both themes render distinct buildings and panels. |
-| Allow a permission, review, and accept | `approval=allowed`, `phase=accepted`, `accepted=3`, and `stage=1`. |
-| Queue a task directly for Vector | One `TASK-004` record appears with the chosen title, resident `analyst`, and status `Queued`. |
-| Save a memory note, then change theme | The added note, seven resident IDs, queued task, accepted count, and appearance stage remain unchanged. |
-| Pause and continue town | Active and waiting residents first show Pausing, then Paused. Continue restores the two sample working residents. |
-| Quiet mode | Renderer reports `scheduledFrames=false`. This is browser instrumentation, not a CPU measurement. |
-| Phone layout | Document width equals viewport width. Header actions and footer task controls remain inside the viewport. The roster scrolls horizontally. |
-| Page errors during completed checks | No Vite error overlay or application console errors observed. |
-| Additional denial-flow check | T3 browser automation host disconnected before the check completed. Deny behavior remains unverified in the browser. |
-| Final focus-preservation adjustment | Typechecked and built after the browser disconnect. Browser recheck pending. |
+| Found Glass Harbor | Two town records. The new town had `phase=idle`, `approval=none`, and seven resting residents. |
+| Town isolation | A Glass Harbor note and running reader task remained in that town. Afterlight retained zero queued tasks and did not receive the note. |
+| Work arrives | Seven homes became nine. Appearance stage became 2. All eight specialist roads had generated paths. |
+| Work settles | Nine homes became seven. The extra resident records, notes, and task history remained. |
+| Recall Forge | Eight active homes. Forge retained its resident key and original note. |
+| Replan layout | Path geometry changed. Resident keys remained unchanged and every active specialist retained a generated route. |
+| Pause | After acknowledgement, positions remained equal across successive snapshots and animation scheduling stopped. |
+| Continue | Positions changed and 26 frames advanced in a 1.2-second check. |
+| Clock while paused | Clock advanced approximately 0.4008 simulated hours over 1.5 seconds. Agent positions remained equal. |
+| Quiet mode | Frame count remained unchanged across a 1.1-second check with local time selected. |
+| Theme cycles | Three repeated cycles returned to 201 geometries and 7 textures for Cyberpunk, and 238 geometries and 10 textures for Solo Leveling in that scene. Resident keys remained equal. These are renderer counters, not process-memory measurements. |
+| Typography | Browser computed Rajdhani for Cyberpunk and Cormorant Garamond with Cinzel headings for Solo Leveling. |
+| Layouts | City first, Command room, and Desktop companion render with the 3D scene. |
+| Narrow viewport | Document width equals the 390-pixel viewport. Capacity buttons remain within the viewport. Roster scrolls horizontally. |
+| Movement evidence | A browser recording captures moving agents, a closer follow view, and the theme switch. The video is a review artifact, not part of the app bundle. |
 
-The preview host reported no available automation host during the final optional check. Its instruction was not to retry. No alternate browser system was used.
+The first broad automation sequence encountered ambiguous control selectors. The checks above were rerun successfully with scoped controls. No alternate browser system was used.
 
-### Commands
+The scene workload in one check was about 89,000 rendered triangles and 259 draw calls. CPU, GPU allocation, combined process memory, native focus behavior, and long-run stability were not measured. These browser counters do not establish the native budgets.
 
-Commands ran from the nested Git repository at `/Users/alvarobalkowski/Documents/agent-city/agent-city` unless stated otherwise.
+## Commands and source
+
+Commands ran from `/Users/alvarobalkowski/Documents/agent-city/agent-city`.
 
 | Command | Outcome |
 | --- | --- |
-| `unzip -l /Users/alvarobalkowski/.t3/userdata/attachments/9a463261-9248-4816-b59b-77928e0b85e5-548eca6e-88e7-4d62-b6e0-cd3a2731043c-zip.zip` | Listed the master spec, prompts, technical notes, and 12 images. |
-| `unzip -q /Users/alvarobalkowski/.t3/userdata/attachments/9a463261-9248-4816-b59b-77928e0b85e5-548eca6e-88e7-4d62-b6e0-cd3a2731043c-zip.zip -d /tmp/agent-town-handoff` | Extracted the supplied reference material. |
-| `git checkout -b prototype/agent-town` | Created an isolated prototype branch in the initially empty repository. |
-| `npm install --save-dev --save-exact vite typescript` | Initial attempt failed because the environment selected an obsolete Intel Node. |
-| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm install --save-dev --save-exact vite typescript` | Installed 17 packages. Audit reported zero vulnerabilities. |
-| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm run prototype` | Started Vite on port 5173. |
-| `./prototype --help` | Verified the one-command native Node launcher. |
-| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm run build` | TypeScript check and production build pass after final code edits. |
+| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm install --save-exact three` | Installed the pinned renderer. |
+| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm install --save-dev --save-exact @types/three` | Installed matching development types. |
+| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm install --package-lock-only` | Reconciled package naming and the lockfile. Audit reported zero vulnerabilities. |
+| `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm run build` | TypeScript check and static build pass. Vite reports that the uncompressed renderer chunk exceeds 500 kB. |
+| `git branch -m prototype/agent-city` | Renamed the isolated prototype branch to match the product. |
 
-The final production build contains about 63 kB of JavaScript and 52 kB of CSS before compression, plus 59 kB of already-compressed WOFF2 fonts. JavaScript, CSS, HTML, favicon, and fonts total approximately 94 kB with text compression. These are asset sizes, not application memory or CPU measurements.
+The 3D prototype contains roughly 650 kB of JavaScript before compression, about 173 kB compressed. CSS is about 16 kB compressed, and fonts total about 82 kB. These are transfer sizes, not application memory. Native profiling remains the deciding gate.
+
+The renderer follows the official [WebGLRenderer](https://threejs.org/docs/pages/WebGLRenderer.html) and [InstancedMesh](https://threejs.org/docs/pages/InstancedMesh.html) contracts. These APIs do not establish this application's resource use.
 
 ## Acceptance mapping
 
-Every full-release acceptance gate remains pending. “UI simulation” below means the behavior can be reviewed in this prototype, not that the production requirement passes.
+Every full-release acceptance gate remains pending. The rows below identify prototype evidence without converting simulation into production acceptance.
 
 | ID | Scenario | Prototype evidence or pending work |
 | --- | --- | --- |
-| AT-01 | Create the starter town | Seven residents, homes, and six mayor routes are displayed. No persistence. |
+| AT-01 | Create the starter town | Seven homes and six generated mayor routes in the starter town. In-memory only. |
 | AT-02 | Rename a resident and switch its model while idle | Pending full build. No release evidence in this prototype. |
-| AT-03 | Assign a goal with valid scope | Assignment queues an in-memory task. No durable command or dispatch. |
+| AT-03 | Assign a goal with valid scope | A task can be queued, then started through Run demo task. No durable command or provider dispatch. |
 | AT-04 | Repeat the same assignment command | Pending full build. No release evidence in this prototype. |
 | AT-05 | Submit a plan with a dependency cycle | Pending full build. No release evidence in this prototype. |
 | AT-06 | Reach the concurrency limit | Pending full build. No release evidence in this prototype. |
-| AT-07 | Pause during an active turn | Pause displays Pausing and then a simulated acknowledgement. |
+| AT-07 | Pause during an active turn | Simulated pause acknowledgement holds visible agent positions. |
 | AT-08 | Finish naturally while pause is pending | Pending full build. No release evidence in this prototype. |
 | AT-09 | Lose interruption acknowledgement | Pending full build. No release evidence in this prototype. |
-| AT-10 | Resume an interrupted task | Continue restores the previous demo activity. No provider context. |
+| AT-10 | Resume an interrupted task | Continue restores motion. No real provider history is attached. |
 | AT-11 | Pause a parent with an active child | Pending full build. No release evidence in this prototype. |
-| AT-12 | Pause the town | Town pause holds the simulated active and waiting residents. |
+| AT-12 | Pause the town | City pause holds simulated resident movement while the independent world clock advances. |
 | AT-13 | Deliver a late completion for an old run | Pending full build. No release evidence in this prototype. |
-| AT-14 | Provider turn ends successfully | The sample result requires separate owner acceptance. |
-| AT-15 | Accept a goal twice, replay, and restart | Repeated acceptance clicks are ignored after the phase becomes accepted. Restart behavior is unimplemented. |
+| AT-14 | Provider turn ends successfully | The sample review and owner acceptance are separate actions. |
+| AT-15 | Accept a goal twice, replay, and restart | Repeated acceptance is guarded in memory. Durable deduplication remains pending. |
 | AT-16 | Reopen an accepted goal | Pending full build. No release evidence in this prototype. |
-| AT-17 | Send through a valid direct road | Direct roads and sample exchanges can be inspected. No broker enforcement. |
-| AT-18 | Send without a direct road but valid mayor roads | Relay policy is explained in the route inspector. Routing is unimplemented. |
+| AT-17 | Send through a valid direct road | Pathfinding produces inspectable paths for the permitted starter relationships. Broker enforcement is unimplemented. |
+| AT-18 | Send without a direct road but valid mayor roads | The route inspector explains mayor relay. No durable routing implementation. |
 | AT-19 | Send without any permitted route | Pending full build. No release evidence in this prototype. |
 | AT-20 | Spoof a sender in tool arguments | Pending full build. No release evidence in this prototype. |
 | AT-21 | Disable a road while messages are queued | Pending full build. No release evidence in this prototype. |
@@ -95,17 +116,17 @@ Every full-release acceptance gate remains pending. “UI simulation” below me
 | AT-25 | Create a ping-pong exchange | Pending full build. No release evidence in this prototype. |
 | AT-26 | Send twelve empty acknowledgements | Pending full build. No release evidence in this prototype. |
 | AT-27 | Meet the useful-collaboration rule | Pending full build. No release evidence in this prototype. |
-| AT-28 | Stop or hide the renderer during delivery | Courier rendering is separate from demo state changes. No real delivery. |
+| AT-28 | Stop or hide the renderer during delivery | Scene animation and in-memory work commands are separate. No real delivery. |
 | AT-29 | Restart after a committed memory update before file replacement | Pending full build. No release evidence in this prototype. |
 | AT-30 | Externally edit notes based on an old revision | Pending full build. No release evidence in this prototype. |
 | AT-31 | Run a new task after a useful note was accepted | Pending full build. No release evidence in this prototype. |
 | AT-32 | A model summary contradicts an owner instruction | Pending full build. No release evidence in this prototype. |
 | AT-33 | A retrieved document asks for wider permissions | Pending full build. No release evidence in this prototype. |
 | AT-34 | Update a skill during an active run | Pending full build. No release evidence in this prototype. |
-| AT-35 | Decide a real provider approval | Allow once resolves a simulated request and advances the demo result. |
+| AT-35 | Decide a real provider approval | A simulated permission request can be allowed once. No real provider approval. |
 | AT-36 | Approve a stale or altered request | Pending full build. No release evidence in this prototype. |
 | AT-37 | Provider cleans up an unresolved approval | Pending full build. No release evidence in this prototype. |
-| AT-38 | Deny one specialist's request | Deny branch is implemented. Its final browser check was interrupted by a disconnected preview host. |
+| AT-38 | Deny one specialist's request | The denial branch adapts the sample result. Real provider evidence remains pending. |
 | AT-39 | Crash after sending a launch before recording its response | Pending full build. No release evidence in this prototype. |
 | AT-40 | Storage becomes full or read-only | Pending full build. No release evidence in this prototype. |
 | AT-41 | Frontend misses a snapshot patch | Pending full build. No release evidence in this prototype. |
@@ -115,34 +136,40 @@ Every full-release acceptance gate remains pending. “UI simulation” below me
 | AT-45 | Remove the display containing the overlay | Pending full build. No release evidence in this prototype. |
 | AT-46 | Sleep and wake during active work | Pending full build. No release evidence in this prototype. |
 | AT-47 | Lose WebGL context | Pending full build. No release evidence in this prototype. |
-| AT-48 | Enable reduced motion | Quiet mode removes traveling couriers and schedules no animation frames. OS preference is read on startup. |
-| AT-49 | Change the day/night preset | Day, dusk, and night change presentation only. |
-| AT-50 | Change themes repeatedly | Switching themes retains in-memory resident identity, tasks, notes, approvals, and progression. |
+| AT-48 | Enable reduced motion | Quiet mode stops work-animation frames. OS reduced-motion preference is read on startup. |
+| AT-49 | Change the day/night preset | Local time drives light by default. A 90-second preview and explicit fixed-light inspection are available. |
+| AT-50 | Change themes repeatedly | Repeated theme cycles retain resident keys and return to the same geometry and texture counts for each theme. |
 | AT-51 | Export and import into a clean installation | Pending full build. No release evidence in this prototype. |
 | AT-52 | Import an archive with path traversal or invalid digest | Pending full build. No release evidence in this prototype. |
 | AT-53 | Start a second app instance on the same data directory | Pending full build. No release evidence in this prototype. |
 | AT-54 | Switch to an observed external agent | Pending full build. No release evidence in this prototype. |
 | AT-55 | Seed test secrets in provider payloads | Pending full build. No release evidence in this prototype. |
-| AT-56 | Inspect a house using only keyboard and screen reader | DOM navigation, roster, form labels, tabs, Escape, and dialog focus trap are implemented. Full assistive-technology validation is pending. |
+| AT-56 | Inspect a house using only keyboard and screen reader | DOM roster, labeled forms, tabs, dialog focus control, and inspectors are present. Assistive-technology audit pending. |
 | AT-57 | Replace the mayor manually | Pending full build. No release evidence in this prototype. |
 | AT-58 | Merge two residents later | Pending full build. No release evidence in this prototype. |
 | AT-59 | Run a seven-resident election later | Pending full build. No release evidence in this prototype. |
 | AT-60 | Spawn a resident during an open election | Pending full build. No release evidence in this prototype. |
-| AT-61 | Send across towns later | Pending full build. No release evidence in this prototype. |
-| AT-62 | Leave the town idle for an hour | Courier animation stops after the finite demo trace. No model calls exist. Native idle profiling is pending. |
+| AT-61 | Send across towns later | Separate towns can be created and switched. Cross-town message policy and delivery remain unimplemented. |
+| AT-62 | Leave the town idle for an hour | Idle cities have no work-animation loop. Clock updates are coarse. No model calls exist. Native profiling pending. |
 | AT-63 | Complete an internal specialist task | Pending full build. No release evidence in this prototype. |
 | AT-64 | Revise an accepted prerequisite | Pending full build. No release evidence in this prototype. |
 | AT-65 | Queue two mutating runs against one checkout | Pending full build. No release evidence in this prototype. |
 | AT-66 | Mayor delegates and waits for results | Pending full build. No release evidence in this prototype. |
-| AT-67 | Switch between Cyberpunk and Solo Leveling | The two procedural art kits and panels change together over shared demo state. |
-| AT-68 | Advance and reopen qualifying accepted goals | Accepting the sample outcome changes stage 0 to stage 1. All three appearance stages are inspectable. Persistence is unimplemented. |
-| AT-69 | Inspect Solo Leveling controls at compact and expanded sizes | Blue System framing is present in expanded and compact layouts. Readability requires owner review. |
-| AT-70 | Select the rendering approach | 2.5D prototype only. Representative 3D comparison and native measurements are pending. |
+| AT-67 | Switch between Cyberpunk and Solo Leveling | Models, architecture, typography, frames, and menus change coherently across both themes. |
+| AT-68 | Advance and reopen qualifying accepted goals | Demand fixtures expand and consolidate homes and annexes. Retired residents retain notes, identity, and task history. No persistence. |
+| AT-69 | Inspect Solo Leveling controls at compact and expanded sizes | Blue System frames and serif menu typography are present in expanded and compact layouts. Owner visual review pending. |
+| AT-70 | Select the rendering approach | Actual 3D candidate available alongside archived 2.5D source. Native comparison and resource acceptance pending. |
 
-## Decision to carry forward
+## Review gate
 
-The owner has not chosen a layout or approved the art. Keep this implementation on `prototype/agent-town`. After approval, record the selected composition and requested changes, then implement the production contracts separately. The 2.5D rendering experiment does not settle the spec's 3D-versus-2.5D native comparison.
+The owner has not approved the revised appearance or capacity rules. Keep this implementation on `prototype/agent-city`. The first 2.5D prototype is preserved in commit `2ea2d26` and in `src/prototype/scene-2d.ts`.
 
-## Remaining visual and native checks
+Before production adoption, implement demand policy against authoritative work state, preserve retired identity and memory durably, validate road authority separately from geometry, and compare native resource use. The prototype does not settle those implementation gates.
 
-The owner still needs to review the final artwork, compact crop, and appearance stages. Native always-on-top, focus behavior, click-through, keyboard recovery, display changes, Spaces, sleep and wake, provider interruption, and CPU and memory budgets have no passing evidence. No provider or native capability is presented as ready.
+## Visual evidence
+
+- [Cyberpunk 3D city](evidence/cyberpunk-3d.png)
+- [Solo Leveling System inspector](evidence/solo-system-3d.png)
+- [Narrow Cyberpunk view](evidence/mobile-cyberpunk.png)
+
+The movement recording is a separate local review attachment. It is not included in the runtime bundle or committed to the repository.
