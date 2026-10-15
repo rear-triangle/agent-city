@@ -1,12 +1,12 @@
 import * as T from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import type { Resident, Theme } from './state';
-export const roleColors:Record<string,string>={mayor:'#f1d65b',scout:'#71e0c4',reader:'#88cbf0',analyst:'#a698fa',writer:'#ed83b2',editor:'#bacf92',critic:'#f1826e'};
+export const roleColors:Record<string,string>={chief:'#f7e5a0',mayor:'#f1d65b',scout:'#71e0c4',reader:'#88cbf0',analyst:'#a698fa',writer:'#ed83b2',editor:'#bacf92',critic:'#f1826e'};
 export interface AgentModel{root:T.Group;leftLeg:T.Group;rightLeg:T.Group;leftArm:T.Group;rightArm:T.Group;cape?:T.Mesh;prop:T.Group;phase:number;moving:boolean}
 /** Original stylized models. No extracted game assets. Proportions are shared with the roster portraits. */
 export function createAgent(r:Resident,theme:Theme):AgentModel{
  const root=new T.Group();root.userData.resident=r.id;const shadow=theme==='shadow';
- const shadowColors:Record<string,string>={mayor:'#ae9aff',scout:'#76baff',reader:'#a4d7ff',analyst:'#b6a7ff',writer:'#92b3ff',editor:'#96caff',critic:'#b0a4ff'};const color=shadow?(shadowColors[r.id]||'#9bc7ff'):(roleColors[r.id]||'#f0bc74');const materials=new Map<string,T.MeshStandardMaterial>();
+ const shadowColors:Record<string,string>={chief:'#e3faff',mayor:'#ae9aff',scout:'#76baff',reader:'#a4d7ff',analyst:'#b6a7ff',writer:'#92b3ff',editor:'#96caff',critic:'#b0a4ff'};const color=shadow?(shadowColors[r.id]||'#9bc7ff'):(roleColors[r.id]||'#f0bc74');const materials=new Map<string,T.MeshStandardMaterial>();
  const mat=(c:string,glow=false)=>{const key=c+glow;if(!materials.has(key))materials.set(key,new T.MeshStandardMaterial({color:c,roughness:.73,metalness:shadow?.3:.13,flatShading:true,emissive:glow?c:'#000000',emissiveIntensity:glow?.9:0}));return materials.get(key)!;};
  const part=(parent:T.Object3D,w:number,h:number,d:number,x:number,y:number,z:number,c:string,glow=false)=>{const m=new T.Mesh(new RoundedBoxGeometry(w,h,d,1,Math.min(.025,w/4,h/4,d/4)),mat(c,glow));m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m;};
  const dark=shadow?'#141c37':'#24333e',fabric=shadow?'#26375c':r.id==='reader'?'#b6c9cc':r.id==='mayor'?'#a69340':r.id==='critic'?'#763e3b':'#36565e';
@@ -33,6 +33,13 @@ export function createAgent(r:Resident,theme:Theme):AgentModel{
   for(const side of [-1,1])part(root,.12,.28,.27,side*.14,.44,0,fabric);
   part(root,.22,.065,.045,0,1.29,0,r.id==='scout'?'#28404a':'#89939a');
   if(r.id==='mayor')part(root,.2,.035,.02,.02,.79,.144,color,true);
+ }
+ if(r.id==='chief'){
+  // The owner has a distinct white coat and crest, separate from the mayor's uniform.
+  part(root,.43,.45,.26,0,.64,0,shadow?'#c0d8ef':'#d8cead');
+  part(root,.04,.35,.035,0,.66,.15,color,true);
+  for(const side of [-1,1])part(root,.1,.38,.27,side*.17,.39,0,shadow?'#96b8dc':'#b9b38e');
+  part(root,.4,.065,.31,0,1.23,0,color);part(root,.09,.15,.07,0,1.31,0,color,true);
  }
  const prop=new T.Group();root.add(prop);
  switch(r.role){

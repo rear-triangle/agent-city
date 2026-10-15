@@ -1,6 +1,6 @@
 # Agent City prototype status
 
-Revision 2 addresses the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
+Revision 3 adds the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
 
 ## Corrections and behavior
 
@@ -9,18 +9,18 @@ Revision 2 addresses the owner's eight criticisms and the request for a system t
 | Name | Agent City throughout the product UI and package metadata. Town remains the name for a project settlement inside the city network. |
 | Additional towns | Create, name, and switch towns. Residents, notes, queues, approvals, demand, and stage are stored separately in memory. |
 | More depth | Actual orthographic 3D with real geometry, shadows, orbit, zoom, and follow camera. |
-| Visible agents | Articulated residents walk generated paths, work at a destination, and return. Paused and resting residents do not pace. |
+| Visible agents | Residents work indoors with furnished cutaways. Nyx makes a finite example errand. A message robot and the Chief travel generated roads for specific handoffs and visits. |
 | Time-based change | Local computer time is the default. Gradual lighting has a 90-second preview and an explicit fixed-light override. The clock runs independently of task pause. |
-| Full themes | Cyberpunk uses Rajdhani, cut panels, yellow rules, and technical spacing. Solo Leveling uses Cinzel and Cormorant Garamond, blue System frames, shadow armor, and different architecture. |
+| Full themes | Cyberpunk uses Rajdhani, cut panels, yellow rules, and technical spacing. Solo Leveling uses Abel narrow sans-serif, translucent blue System windows, luminous rails, inset menu labels, geometric linework, shadow armor, and different architecture. |
 | Generated roads | A grid pathfinder routes around home and annex footprints. Seeded layout changes and population changes rebuild geometry. Permission relationships do not come from the drawn path. |
 | Substantial characters | Original 3D bodies have articulated limbs, coats or capes, armor, boots, visors or helmets, and role equipment. Portraits use matching visual cues. |
 | Evolution and devolution | Work-arrival and work-settlement fixtures add or retire homes and annexes. Recall preserves identity and notes. Consolidation excludes the mayor and residents with unfinished work. Inactivity causes no penalty. |
 
 ## Runtime and limits
 
-The prototype uses TypeScript, DOM controls, CSS, and Three.js 0.186.1. Vite 8.3.4, TypeScript 7.0.2, and Three.js types 0.186.0 are pinned development dependencies. Three.js is the only runtime library. Four locally bundled font files provide the two theme systems.
+The prototype uses TypeScript, DOM controls, CSS, and Three.js 0.186.1. Vite 8.3.4, TypeScript 7.0.2, and Three.js types 0.186.0 are pinned development dependencies. Three.js is the only runtime library. Three locally bundled font files provide the two theme systems, totaling about 53 kB.
 
-Repeated static primitives are instanced. Work animations are capped at 24 fps in expanded views and 12 fps in the compact view. Quiet mode stops those animation callbacks. Changes and coarse clock updates can still redraw. Fixed lighting has no periodic renderer clock update. Hidden documents stop rendering callbacks and clock timers.
+Repeated static primitives are instanced. Visible motion is capped at 24 fps in expanded views and 12 fps in the compact view. Indoor work without a cutaway falls back to two-second updates for optional chatter; settled scenes with no chatter stop motion callbacks. Quiet mode stops those animation callbacks. Changes and coarse clock updates can still redraw. Fixed lighting has no periodic renderer clock update. Hidden documents stop rendering callbacks and clock timers.
 
 Towns, layouts, and notes are actual interactive prototype state. They are not durable. Reload resets them. Task starts, demand events, approvals, and work results are simulated. No provider process or model is launched.
 
@@ -32,7 +32,7 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 
 | Milestone | Status |
 | --- | --- |
-| Design prototype revision 2 | Interactive and browser checked. Awaiting owner review. |
+| Design prototype revision 3 | Interactive and browser checked. Awaiting owner review. |
 | M0 integration proof | Deferred until design approval. |
 | M1 durable domain | Not started. In-memory prototype state only. |
 | M2 communication and memory | Inspectors and geometry only. Durable authority and context preparation pending. |
@@ -41,7 +41,32 @@ No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native
 | M5 personal preview | Not started. Packaging, durability, full accessibility audit, and resource trials pending. |
 | M6 and M7 | Production features deferred. Multi-town composition has been brought forward for this prototype at the owner's request. |
 
-## Browser observations
+## Revision 3 browser observations
+
+Checked through T3 Code's collaborative browser at 1440 by 900 and 390 by 844.
+
+| Check | Observed outcome |
+| --- | --- |
+| Theme typography | Computed Rajdhani for Cyberpunk and Abel for Solo Leveling. Same seven resident keys after switching. |
+| Indoor work | Sage remained at the home coordinate with `location=Inside home`. Look inside revealed the resident, desk, monitor, and shelves while hiding the outer home. |
+| Chief headquarters | Separate Chief home, letterbox actions, white uniform and crest, furnished cutaway, and visits to residents. The Chief is excluded from agent staffing and consolidation. |
+| Chief movement | Two samples 1.1 seconds apart showed movement on a generated road. A visit to Atlas completed, then Return home ended at the original coordinate with `location=Inside headquarters`. |
+| Courier | MSG-025 traveled from scout to reader via the mayor hub, changed from In transit to Delivered, and then left the scene. Delivery is an in-memory animation fixture. |
+| Pause | Character positions and courier progress were equal across snapshots after pause acknowledgement. No motion frames were scheduled. |
+| Quiet | No additional frames across a 1.2-second local-time check; speech cleared. |
+| Capacity and paths | Work arrivals produced nine agents plus the Chief access route. Every route had cells before and after replanning. Work settlement returned to seven agents. |
+| Speech | Activity and quirk bubbles appeared over homes and traveling characters. Maximum two bubbles, optional toggle, no inference. |
+| Mobile | Document width equaled 390 pixels. All four capacity and Chief controls stayed inside the viewport. System and Cyberpunk inspectors remained scrollable. |
+| Layouts | B kept command content left of the 3D view. C retained its compact 458 by 308 canvas. |
+| Build | TypeScript and Vite passed. The renderer chunk still triggers the 500 kB size warning. |
+
+Saved revision 3 screenshots are in `docs/evidence/`. A browser recording also captures the indoor view, courier, and Chief visit.
+
+The Hamlet transcripts and images establish a resident community with persistent homes, a Chief, message roads, and adaptive staffing. Durable memory, road-to-rail maturity, mergers with retained records, elections with a two-thirds threshold, the former mayor remaining a resident, and production inter-town broker links remain full-build requirements. This prototype does not claim to implement them. Theme changes and layout replanning rebuild the scene and can interrupt an in-flight demo courier. Production message delivery must be independent of scene animation.
+
+## Revision 2 browser baseline
+
+These earlier observations describe the previous revision, before indoor work and the System font correction.
 
 Checks used T3 Code's collaborative browser at a 1440 by 900 CSS viewport and at 390 by 844. Saved screenshots can have a different raster size because the preview capture scales its output.
 
@@ -79,7 +104,7 @@ Commands ran from `/Users/alvarobalkowski/Documents/agent-city/agent-city`.
 | `PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin npm run build` | TypeScript check and static build pass. Vite reports that the uncompressed renderer chunk exceeds 500 kB. |
 | `git branch -m prototype/agent-city` | Renamed the isolated prototype branch to match the product. |
 
-The 3D prototype contains roughly 650 kB of JavaScript before compression, about 173 kB compressed. CSS is about 16 kB compressed, and fonts total about 82 kB. These are transfer sizes, not application memory. Native profiling remains the deciding gate.
+The revision 3 prototype contains roughly 663 kB of JavaScript before compression, about 177 kB compressed. CSS is about 17 kB compressed, and active fonts total about 53 kB. These are transfer sizes, not application memory. Native profiling remains the deciding gate.
 
 The renderer follows the official [WebGLRenderer](https://threejs.org/docs/pages/WebGLRenderer.html) and [InstancedMesh](https://threejs.org/docs/pages/InstancedMesh.html) contracts. These APIs do not establish this application's resource use.
 

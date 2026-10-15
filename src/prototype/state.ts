@@ -31,13 +31,13 @@ export const state = {
  lighting:'night' as 'day'|'dusk'|'night',
  quiet:matchMedia('(prefers-reduced-motion: reduce)').matches,
  selected:null as string|null,
- panel:null as 'resident'|'approvals'|'activity'|'goal'|'road'|'settings'|'outcomes'|'towns'|null,
+ panel:null as 'chief'|'resident'|'approvals'|'activity'|'goal'|'road'|'settings'|'outcomes'|'towns'|null,
  tab:'Work', paused:false, approval:'pending' as 'pending'|'allowed'|'denied'|'none',
  phase:'working' as 'working'|'review'|'accepted'|'idle',
  accepted:2, stage:0, zoom:1, roads:true,
  revision:1, goal:'Choose the right event transport',
  tasks:[] as {id:string; title:string; resident:string; status:string}[],
- toast:'', replay:0,
+ toast:'', replay:0, peek:null as string|null, chatter:true, courierSerial:0,
 };
 const listeners = new Set<() => void>();
 export function subscribe(fn:()=>void) { listeners.add(fn); return ()=>listeners.delete(fn); }
@@ -84,7 +84,7 @@ export const towns:PrototypeTown[]=[{id:'afterlight',name:'Afterlight',purpose:'
 export function currentTown(){return towns.find(t=>t.id===state.townId)!;}
 export function activeResidents(){return residents.filter(r=>!r.retired);}
 function saveTown(){const t=currentTown();t.people=copy(residents);t.snapshot=snapshot();t.messages=copy(exchanges);}
-export function switchTown(id:string){if(id===state.townId)return;saveTown();const t=towns.find(t=>t.id===id);if(!t)return;update(()=>{state.townId=id;Object.assign(state,copy(t.snapshot));residents.splice(0,residents.length,...copy(t.people));exchanges.splice(0,exchanges.length,...copy(t.messages));state.panel='towns';state.selected=null;state.replay++;state.layoutRevision++;});}
+export function switchTown(id:string){if(id===state.townId)return;saveTown();const t=towns.find(t=>t.id===id);if(!t)return;update(()=>{state.townId=id;state.peek=null;Object.assign(state,copy(t.snapshot));residents.splice(0,residents.length,...copy(t.people));exchanges.splice(0,exchanges.length,...copy(t.messages));state.panel='towns';state.selected=null;state.replay++;state.layoutRevision++;});}
 export function foundTown(name:string,purpose:string){saveTown();const id=`city-${Date.now().toString(36)}`;towns.push({id,name,purpose,seed:towns.length+1,people:initialPeople.map(r=>({...copy(r),activity:'Resting',retired:false,notes:r.notes.slice(0,1),task:'Ready for an assignment'})),snapshot:{demand:'normal',approval:'none',phase:'idle',goal:'No active goal',accepted:0,stage:0,tasks:[],paused:false},messages:[]});switchTown(id);relayout();toast(`${name} founded in demo memory. Its residents and work are separate.`);}
 export function relayout(){const t=currentTown();t.seed++;const slots:PointLike[]=[[-4.7,-3.8],[0,-4.9],[4.6,-3.4],[4.8,2.9],[0,5],[-4.8,2.7],[-8,-.5],[8,.5],[-3.7,6.6],[4,6.6],[-5.8,-6]];update(()=>{activeResidents().filter(r=>r.id!=='mayor').forEach((r,i)=>{const slot=slots[(i+t.seed)%Math.min(slots.length,Math.max(6,activeResidents().length-1))];r.x=slot[0]+Math.sin(t.seed*2+i)*.2;r.z=slot[1]+Math.cos(t.seed*3+i)*.2;});state.layoutRevision++;});}
 type PointLike=[number,number];
@@ -110,3 +110,6 @@ export function previewDemand(high:boolean){
   toast('Demo workload settled. Extra homes retired, notes and task history retained.');
  }
 }
+
+/** The Chief is the human owner, never an inference worker or a consolidation candidate. */
+export const chief:Resident={id:'chief',name:'Chief',role:'Chief',home:'Chief headquarters',shadowHome:'Player sanctuary',x:-6,z:5,width:2,depth:1.65,height:1.8,activity:'Resting',task:'Set direction, visit residents, and decide what may proceed.',notes:[],skills:[]};

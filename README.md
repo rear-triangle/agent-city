@@ -2,7 +2,7 @@
 
 Open [Agent City](http://localhost:5173/prototype/?variant=A&theme=cyber). This is the revised design prototype. The production build awaits approval.
 
-Use the header to switch between Cyberpunk and Solo Leveling. Drag the scene to orbit the real 3D geometry, scroll to zoom, or select a resident and choose **Follow in 3D**.
+Use the header to switch between Cyberpunk and Solo Leveling. Drag the scene to orbit the real 3D geometry, scroll to zoom, or select a resident and choose **Look inside** for a furnished cutaway.
 
 | Layout | Preview | Main interaction |
 | --- | --- | --- |
@@ -44,14 +44,24 @@ The launcher selects this Mac's native Homebrew Node. It avoids the older Intel 
 
 These controls preview responses to demand. They do not implement an autonomous provider scheduler or grant new execution permissions. Inactivity causes no decay penalty.
 
-## Watch agents and time
+## Meet the Chief and residents
 
-1. Watch Nyx and Sage walk their generated routes, work at a destination, and return. Other residents have role-specific equipment and poses.
-2. Select a resident and choose **Follow in 3D** for a closer view. Use the camera reset control to return to the city view.
-3. Select **Pause city**. Agents hold their visible positions after the simulated interruption acknowledgement. **Continue city** resumes movement.
-4. Open **Settings**. Local time is the default. **90s preview** runs a full day in 90 seconds, including gradual dawn and dusk. The clock continues while work is paused.
-5. Choose **Fixed light** only for manual art inspection. Return to **Local time** for normal use.
-6. Enable **Quiet mode** to stop walking and pose animation. The scene still redraws for user changes and coarse clock updates.
+1. Open **Chief** beneath the city heading or use the **C** button on the left rail. Your home has a letterbox, a travel beacon, and a distinct white-coated character.
+2. Open requests from the letterbox, give the mayor a goal, or manage towns and capacity.
+3. Choose **Look inside headquarters**. The outer building hides to reveal your character and desk. **Close cutaway** restores the building.
+4. Choose a resident under **Your home & visits**, or open a resident and select **Visit as Chief**. Your character follows the generated access roads. Pause holds a visit in place. Return home sends the Chief back inside.
+5. Residents normally work or rest indoors. Select Sage and choose **Look inside Sage's home** to see the reading workspace. Nyx makes one sample trip to the mayor hub and returns, rather than pacing indefinitely.
+6. From the Chief panel, choose **Send a demo courier**. A small robot carries a source index from Nyx to Sage through the mayor hub. **Activity** records its progress and delivery. Replanning or switching themes interrupts a visible delivery in this throwaway scene.
+7. Occasional speech bubbles describe an activity or a character quirk. These are scripted, require no model calls, and show at most two lines at once. Turn **Resident chatter** off in Settings, or use Quiet mode.
+
+Solo Leveling uses Abel, a locally bundled narrow sans-serif font, and translucent System windows based on the supplied menu references. Its illuminated rails, inset labels, geometric linework, framed actions, status tabs, and notifications differ from the Cyberpunk cut panels, yellow signals, and Rajdhani lettering. The font and artwork are original choices for this prototype, not extracted anime assets.
+
+## Watch time and pause
+
+1. Select **Pause city**. Residents, the Chief, and couriers hold their current positions. **Continue city** resumes movement.
+2. Open **Settings**. Local time is the default. **90s preview** runs a full day in 90 seconds, including gradual dawn and dusk. The clock continues while work is paused.
+3. Choose **Fixed light** for manual art inspection. Return to **Local time** for normal use.
+4. Enable **Quiet mode** to stop walking, pose animation, and chatter. User changes and coarse clock updates still redraw. Indoor work without a cutaway uses coarse updates for optional chatter rather than a continuous animation loop.
 
 ## Try an assignment
 
