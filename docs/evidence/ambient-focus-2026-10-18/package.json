@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "builtAtUtc": "2026-10-18T14:52:10.287201+00:00",
+  "architecture": "arm64",
+  "bundle": "target/release/bundle/macos/Agent City.app",
+  "archive": "target/release/bundle/Agent City-0.2.0-arm64.zip",
+  "zipBytes": 5292605,
+  "zipSha256": "ebe87365b51aa6ee6ffd0563a3c7b4f8631716846c9fd1eba9c3a8812008d88d",
+  "sourceInputs": 121,
+  "sourceInputsSha256": "e364c0abbeedf019e809c8bd7ac992e8497bc235d5c25ee4a355b5bec10877b3",
+  "fingerprintFormat": "Sorted path, NUL, SHA-256, newline. Exact entries in source-inputs.json.",
+  "signing": "Local ad hoc signature verified with codesign --verify --deep --strict; not Developer ID signed or notarized.",
+  "checks": {
+    "runtimeTests": 18,
+    "providerProtocolTests": 1,
+    "integrationTests": 13,
+    "format": "passed",
+    "clippy": "passed",
+    "typescript": "passed",
+    "webBuild": "passed",
+    "nativeBuild": "passed",
+    "zipIntegrity": "passed",
+    "nativeFocusTransition": "passed captured native flags; active=false, key=false, can_key=false, ignores_mouse=true, visible=true",
+    "nativeFinalSmoke": "clean package launches; Escape restores Settings focus; Ambient remains visibly rendered",
+    "physicalInput": "owner confirmed typing in TextEdit works with the corrected Ambient overlay open; direct click-through on city pixels remains unverified"
+  },
+  "releaseAcceptance": "incomplete; remaining acceptance gates documented in docs/BUILD-STATUS.md"
+}

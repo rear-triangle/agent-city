@@ -1,0 +1,12 @@
+Generated with the built-in image_gen tool on 2026-10-18.
+The original generated PNG is source.png. Tauri's icon command produced the PNG sizes and ICNS without creative edits.
+
+Prompt:
+Use case: stylized-concept. Asset type: production macOS application icon for Agent City, a persistent community of useful AI agents represented by a miniature city. Create one polished 1024 by 1024 square icon asset, not a mockup. A single large sculptural isometric city emblem: one tall central tower and two shorter companion buildings connected on a compact elevated city block. Strong simple silhouette, substantial chunky geometry, very few large luminous windows. Deep midnight navy rounded-square tile with softly bevelled edges, cyan/teal lit faces and a restrained violet accent, premium tactile 3D material, clean restrained lighting. Centered symmetrical visual weight, city fills most of tile, generous macOS icon outer padding about 8 percent. The tile sits on a genuinely transparent outer background with clean rounded corners. Designed to remain recognizable at 32 pixels, no tiny decorative details, no lettering, no words, no robot face, no brain, no watermark, no surrounding device or scene. Render just the final application icon.
+
+Tool option: transparent_background=true
+Actual source dimensions: 1254 by 1254 pixels, RGBA.
+
+Regenerate package sizes with:
+PATH="/opt/homebrew/bin:$PATH" npm exec tauri -- icon src-tauri/icons/agent-city-v1/source.png --output .tools/generated-app-icon
+Copy 32x32.png, 128x128.png, 128x128@2x.png, and icon.icns into this directory.

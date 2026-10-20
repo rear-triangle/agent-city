@@ -1,0 +1,4 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running `target/debug/examples/hosted_control_proof .city-dev/hosted-disconnect-02`
+Stopped this fixture's own Codex app-server while the exact write awaited approval.
+Passed: disconnection produced Unknown, invalidated the approval, retained the sole run without retry, and made no file change.

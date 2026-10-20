@@ -1,0 +1,193 @@
+{
+  "date": "2026-10-18",
+  "version": "0.2.0",
+  "browser": {
+    "url": "http://localhost:5180",
+    "provider": "deterministic demo, no inference",
+    "residents": 2,
+    "acceptedGoalsAfterChecks": 3,
+    "accessibility": {
+      "textScale": 150,
+      "highContrast": true,
+      "listOnly": true,
+      "announcements": false,
+      "persistedAfterReload": true,
+      "frameCountBefore": 5,
+      "frameCountAfter": 5,
+      "workflowCompleted": true
+    },
+    "focus": {
+      "refresh": true,
+      "acceptResult": true,
+      "webKitMouseActivationReproduction": {
+        "before": false,
+        "after": true,
+        "nativeFinalRetest": "passed: Settings opened by mouse, Escape returns native AX focus to Settings"
+      }
+    },
+    "graphicsContext": {
+      "lossNotice": true,
+      "domControlsUsable": true,
+      "restored": true
+    },
+    "compactSettings": {
+      "width": 420,
+      "height": 280,
+      "reachable": true
+    },
+    "themeSamples": [
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      },
+      {
+        "theme": "cyber",
+        "geometries": 42,
+        "textures": 7,
+        "drawCalls": 262,
+        "triangles": 126063
+      },
+      {
+        "theme": "shadow",
+        "geometries": 58,
+        "textures": 6,
+        "drawCalls": 167,
+        "triangles": 47191
+      }
+    ],
+    "captureLimitation": "Browser text is blurred in saved captures. Native direct screenshots showed readable text."
+  },
+  "native": {
+    "commandWindowObserved": true,
+    "ambientWindowObserved": true,
+    "manualGlobalShortcut": "owner confirmed full Command window returned",
+    "menuRecovery": "owner confirmed full Command window returns after retry",
+    "clickThrough": "native flags pass; owner confirmed TextEdit typing works with corrected overlay open; direct clicks through city pixels remain unverified",
+    "screenReader": "unverified",
+    "sleepWake": "unverified",
+    "displayRemoval": "unverified",
+    "ambientFocusEvidence": "../ambient-focus-2026-10-18/README.md"
+  }
+}

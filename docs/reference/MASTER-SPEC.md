@@ -1,8 +1,12 @@
-# Agent town implementation specification
+# Agent City implementation specification
 
-Version 2.1. Prepared October 14, 2026. Working product name: Agent Town. Intended recipient: T3 and its implementation agent.
+Version 2.1. Prepared October 14, 2026. Updated with owner lifecycle clarifications on October 16, 2026. Product name: Agent City. Intended recipient: T3 and its implementation agent.
+
+The October 16 clarification makes mayor-only startup, task-driven staffing and city founding, and non-destructive retirement and mergers required product behavior. The owner subsequently deferred agent-initiated leadership voting to future work. Manual Chief replacement remains in scope. Other staged-delivery wording describes implementation order, not optional requirements. The owner subsequently approved the vision and authorized the full build. See `docs/BUILD-STATUS.md` for implementation and validation status.
 
 Build a local desktop application in which persistent AI agents inhabit a small, attractive town. The owner talks to a mayor, watches specialists collaborate, and intervenes through a single approval queue. Houses represent agent identity and memory. Roads represent permitted message routes. Couriers represent actual exchanges. The town changes as useful work accumulates.
+
+Agent City includes real backend agent deployment and management. The mayor is a real coordinating agent whose authorized decisions create managed residents, assign work, and dispatch provider runs through the backend. The frontend makes that execution understandable through the city rather than requiring the Chief to follow log lines. Its characters, houses, roads, activity labels, and inspectors reflect backend identities, records, messages, and execution states. A visual change alone never deploys an agent or establishes that work ran.
 
 This document is the authoritative implementation handoff. It supersedes the earlier pixel-dashboard prototypes, the earlier build specification, and the earlier System Design document wherever they differ. Those prototypes are rejected as the visual target. Preserve the useful integration and reliability findings, not their composition or art style.
 
@@ -52,11 +56,23 @@ The following requirements come directly from the conversation:
 | C-08 | Preserve the Hamlet reference's evolving settlement, persistent homes, and visible collaboration. Its medieval setting is not required. |
 | C-09 | Incorporate the concept of persistent agents, a mayor, houses, stored notes and skills, communication roads, and a shared approval list. |
 | C-10 | Preserve the owner's ability to overrule the mayor. |
-| C-11 | Allow provider and model flexibility. Codex is the first integration candidate; local models are of interest. |
+| C-11 | Support local and hosted providers. Offline execution with already installed local models, including the mayor, is a core release requirement. Codex is the initial hosted-runtime integration candidate. |
 | C-12 | Prioritize Cyberpunk 2077 and Solo Leveling versions. Use the newly supplied blue System panels for Solo Leveling interface direction. Medieval fantasy is optional only if artistically compelling. |
 | C-13 | Make reasonable implementation decisions without repeatedly interviewing the owner. Record assumptions and adapt when corrected. |
+| C-14 | Present necessary binary decisions in a compact themed menu with Accept and Deny. Explain the proposed action and consequence briefly, with details available on expansion. |
+| C-15 | Let the Chief ask the mayor about progress and steer an existing task. Support interruption and a revised continuation when live provider steering is unavailable. |
+| C-16 | Let the mayor select approved model and resource profiles for each task. The backend validates capabilities, availability, privacy, authority, and resource limits before dispatch. |
+| C-17 | Clicking an agent or its house opens a compact current-work menu, with expandable skills, memory, and history. |
+| C-18 | Separate project identity from city identity. Several cities and mayors can cooperate on one project's common goal, with task-driven city founding and retained work for later continuation. |
+| C-19 | Keep project selection and deliverable access simple. Provide one project Results view rather than requiring navigation through individual agent histories. |
+| C-20 | Give mayors coordination skills and relevant domain skills. Mayors assign applicable approved skillsets to provisioned agents and verify that the selected model and tools support the assignment. |
+| C-21 | Keep every menu simple and task-focused. Show current state and the relevant primary actions first; reveal history, configuration, and diagnostics on demand. |
+| C-22 | Set explicit delegation boundaries across agents and cities. Give each task one accountable owner and prevent duplicate dispatch or overlapping implementation assignments. |
+| C-23 | Preserve agent history and actionable checkpoints so interruptions retain completed work, instructions, dependencies, and continuation context. Resume from the last confirmed state rather than restarting the project. |
+| C-24 | Automatically provision work against currently available compatible local or hosted resources, with offline fallback, measured resource admission, and preserved task identity. Continue feasible work without requiring manual model switching. |
+| C-25 | Discover and assign applicable skills from the owner's already downloaded local skill packages. Keep skill selection and required dependencies usable offline, with versioned content and no implied new tool authority. |
 
-Liking Hamlet's concept does not establish every quoted rule as a settled product requirement. This specification gives concrete proposed behavior for roads, mergers, elections, and multiple towns. Those choices are labeled defaults or later-phase features, and remain reversible.
+The owner has explicitly confirmed the lifecycle rules in section 2.6. Those requirements take precedence over earlier defaults and optional-feature wording. Detailed thresholds and policies not settled by that clarification remain labeled defaults.
 
 ### 2.2 Adopted defaults
 
@@ -65,21 +81,21 @@ These decisions let implementation begin immediately:
 | Decision | Default | Reason and change rule |
 | --- | --- | --- |
 | Initial production art direction | Cyberpunk district and Solo Leveling shadow domain | Build two distinct visual treatments of one evolving settlement. Cyberpunk is the reversible initial launch selection; the owner has not ranked the two. Medieval is no longer the default or a required release. |
-| Initial execution integration | Managed Codex sessions | Offers a concrete route to assignment, interruption, and continuation. Must pass an installed-version integration check. |
+| Initial execution integrations | Local-model agent execution plus managed Codex sessions when available | Offline capability cannot depend on a hosted provider. Both adapters must pass capability checks for the operations they expose. |
 | Desktop architecture | Rust core and Tauri 2 shell | Keep orchestration local and separate from rendering. |
 | First rendering candidate | Stylized 3D through Three.js with an elevated orthographic camera | Compare a representative scene with a polished 2.5D treatment. Use measured native resource cost and visual quality to decide. Dimensionality is not a binding requirement. |
-| Ordinary controls | TypeScript and React DOM | Use native form semantics and accessible text outside the 3D canvas. |
+| Ordinary controls | TypeScript, HTML DOM, and CSS | Keep the existing compact controls without requiring an additional UI framework. Use native form semantics and accessible text outside the 3D canvas. |
 | Local data | SQLite plus inspectable agent-home exports | Transactional state and portable, human-readable memory. Ownership rules appear below. |
 | Normal concurrency | Two active provider turns across the town | Protect capacity and simplify initial scheduling. User-configurable within provider limits. |
-| Starter population | Mayor and six sleeping specialists | Seven persistent identities do not require seven running models or processes. |
-| Starter specialists | Scout, reader, analyst, writer, editor, critic | Demonstrates the reference workflow. Roles are editable templates, not permanent restrictions. |
-| Initial town count | One | Multi-town routing is a later milestone with a specified contract. |
+| Starter population | Mayor only, with the Chief in the separate sanctuary | Specialists and their homes appear when the mayor assigns useful work. |
+| Available specialist templates | Scout, reader, analyst, writer, editor, critic, and task-specific roles | Templates do not create residents at startup. The mayor chooses roles for the task. |
+| Initial town count | One | The mayor generates additional cities when tasks require them, within the Chief's authorized scope and budget. |
 | Ambient overlay | Approximately 420 by 280 logical pixels | Resizable and repositionable. Show a meaningful crop, not the entire command center shrunk to illegibility. |
 | Expanded window | Approximately 1280 by 800 logical pixels | Adapt to the display's available area. |
 | Initial provider authorization | User-selected workspace and provider's normal approval policy | Never silently replace that policy with unrestricted access. |
 | Task acceptance | Explicit owner acceptance for the top-level result | Specialist completion is separate from acceptance of the final outcome. |
 | Idle behavior | No model calls without work or an explicit request | Ambient animation is optional and independently throttled. |
-| Local models | Adapter contract now; actual integration after the Codex lifecycle works | Do not download model weights as part of setup without an explicit choice. |
+| Local models | Required in the first usable release, initially through the existing native Ollama hosting setup or another verified compatible endpoint | Reuse installed weights. Supply a real bounded agent/tool loop, not text-only inference. No model download is required for ordinary offline operation. |
 
 T3 is the tool receiving this specification. Do not infer that the finished application must depend on T3, use the T3 web stack, or run inside a hosted T3 environment. If that environment cannot run native macOS checks, build the portable modules and simulation there, then provide a precise local validation path. Native overlay behavior cannot be declared complete from browser tests.
 
@@ -98,11 +114,11 @@ T3 is the tool receiving this specification. Do not infer that the finished appl
 
 ### 2.4 First end-to-end experience
 
-The owner opens an inhabited cyberpunk district or shadow domain with a central coordinator base and six specialist homes. A home may be a safehouse, workshop, sanctum, or shadow chamber. Residents are asleep or waiting at home. The view labels the state as Demo until a real provider connects.
+The owner opens a cyberpunk district or shadow domain with only the mayor as an agent. The Chief has a separate sanctuary and remains visible. There are no pre-created specialists or specialist homes. The view labels the state as Demo until a real provider connects.
 
-The owner opens the mayor's house and submits: "Compare three approaches for our project's agent event transport. Give me a recommendation with sources and an implementation checklist." They choose a permitted project and a bounded task budget.
+Selecting the mayor opens a small, theme-specific menu with a task entry. The owner submits: "Compare three approaches for our project's agent event transport. Give me a recommendation with sources and an implementation checklist." They choose a permitted project and a bounded task budget. Scope and budget can use existing defaults, with details available on expansion.
 
-The mayor proposes a short plan and delegates only the roles that add value. The scout gathers relevant material. The reader extracts evidence. The analyst compares options. The writer drafts a result. The editor improves clarity. The critic checks unsupported claims. Roles may be skipped when the task does not need them.
+The mayor creates a short plan, chooses the roles that add value, and creates or recalls the needed residents. Each new resident receives a house with its own skills, notes, and history, and an initial road to the mayor. For a large research task, a scout may gather material, a reader extract evidence, an analyst compare options, a writer draft, an editor improve clarity, and a critic check claims. This is an example, not a required sequence. Roles may be combined or skipped.
 
 A courier carries a visible message along the scout's road to the mayor, then toward the reader. Delivery happens in the runtime independently of walking animation. Clicking the courier reveals sender, recipient, purpose, status, and an appropriately redacted summary.
 
@@ -115,6 +131,25 @@ The mayor presents the final result with sources, review findings, and outstandi
 ### 2.5 Release boundaries
 
 The first usable release must contain a real managed-agent workflow, an artistically coherent evolving settlement, persistent homes, enforced application-mediated message routes, visible message delivery, a working approval queue, pause/continue controls, and durable recovery. A static mockup or an observation-only dashboard does not satisfy this release.
+
+### 2.6 Owner-confirmed city lifecycle
+
+The owner confirmed these rules on October 16, 2026:
+
+- Start with only the mayor as an agent. In Solo Leveling, the initial mayor is Igris. The Chief is the human owner and does not count as a worker.
+- Selecting the mayor opens a compact task menu. Agent house menus lead with current work and expose skills, notes, and history on demand. Every menu follows the selected theme.
+- The same mayor menu accepts progress questions and direction changes for an existing goal. Necessary binary decisions use Accept and Deny, with a short explanation and optional expanded details. Routine delegation within existing authority continues without a Chief decision.
+- The mayor chooses, assigns, creates, recalls, retires, or merges residents as task needs change. Do not require the Chief to configure every specialist or route each handoff manually. Apply existing authority and budget limits without asking for repeated approval of already authorized decisions.
+- Deployment and management are real backend operations. Assigned agents receive their own role, selected context, permitted tools, persistent records, and provider execution binding. The backend dispatches their work when dependencies, authorization, and capacity permit. Show queued, starting, running, blocked, failed, and completed states from observed backend events, rather than inferring them from animation or mayor prose. Preserve the work and its records when the city view is hidden or closed while the backend remains running. Idle residents retain identity without continuous inference or a dedicated model process.
+- Every resident has a house containing its skills, notes, and history. Retirement removes a resident from the active workforce without deleting that identity or its records. Mergers preserve the source identities, knowledge, histories, and successor links.
+- Inactivity consumes no inference tokens and causes no penalty, decay, or automatic retirement. Review staffing when relevant work or a bounded review requires a decision, rather than through continuous mayor polling. Day and night alone do not trigger inference.
+- Agents communicate along roads. A new resident starts connected to the mayor, and messages default to that relay until a permitted direct road exists. The mayor can establish direct roads within authorized policy. Relay transport alone does not require mayor inference.
+- More genuine messages develop a road visually, eventually into a railroad or its theme equivalent. The exact counting rule in section 4.11 remains a tunable default. Retries, duplicate deliveries, and invented chatter must not manufacture progression.
+- Agent-initiated leadership voting is future work, outside the current build scope. Retain the proposed two-thirds vote and the former mayor remaining an ordinary resident as the future design. The Chief can replace the mayor directly without an election.
+- When tasks require a separate city, the mayor generates one and delegates work there within the Chief's authorized limits. Each new city starts with its own mayor, then staffs for its work. Connect cities through permitted roads and retain separate project context and budgets.
+- A project can contain several cooperating cities. The original mayor remains the lead contact for the shared goal while additional mayors coordinate scoped work such as development or marketing. Project files, accepted facts, results, and spending limits remain associated with the project rather than being fragmented into unrelated city records.
+
+Population, cities, and routes can grow or consolidate as work requires. Preserving idle residents is valid. Cosmetic evolution does not grant permissions or prove task success.
 
 Mergers, agent-initiated leadership votes, inter-town roads, and additional providers belong to later milestones. Cyberpunk and Solo Leveling visual treatments belong to the first-preview scope, using one compact asset kit per treatment and the same runtime. Additional neighborhoods and optional medieval art can follow later. Deferred governance and multi-town records must not require replacing agent identity, message storage, or the command contract. Build the shared work lifecycle before expanding governance interfaces.
 
@@ -159,7 +194,7 @@ Mergers, agent-initiated leadership votes, inter-town roads, and additional prov
 29. As the owner, I want to replace the mayor, so that leadership is a configurable role rather than an irreplaceable agent.
 30. As the owner, I want later agent leadership proposals to include reasons and evidence, so that voting is inspectable.
 31. As the owner, I want the former mayor to remain as a resident after replacement, so that leadership changes preserve useful knowledge.
-32. As the owner, I want multiple towns later, so that separate projects and budgets can remain distinct while sharing selected results.
+32. As the owner, I want the mayor to found additional cities when tasks require them, so that separate projects and budgets remain distinct while sharing selected results.
 
 ### 3.4 Control and permissions
 
@@ -246,7 +281,7 @@ Start without a persistent background daemon. Hiding the overlay leaves the appl
 
 Pin tested Rust, Tauri, frontend, renderer, and provider versions in the implementation's lockfiles and compatibility record. Use current official documentation for the installed version. This document specifies behavior, not a claim that every release has identical APIs.
 
-Use Three.js directly before adding a second scene abstraction. React may own application panels, but animation frames must not rerender the whole React tree. Keep the renderer behind a small interface so a pre-rendered isometric implementation or a native renderer can replace it without changing task semantics.
+Use Three.js directly before adding a second scene abstraction. Use TypeScript DOM controls and CSS for menus, with no required React dependency. An animation frame must not rebuild application panels. Keep the renderer behind a small interface so a pre-rendered isometric implementation or a native renderer can replace it without changing task semantics.
 
 The first rendering spike compares a representative stylized 3D scene with a polished 2.5D scene against the target resource budgets inside WKWebView. If it fails, measure the cause. Reduce unnecessary effects and scene complexity before changing engines. Do not claim that Rust makes frontend rendering free. Do not switch to Bevy, Electron, or a native renderer solely because of a benchmark taken from a different workload.
 
@@ -257,21 +292,24 @@ Minimum macOS support is an installation-time engineering decision. Target the o
 | Entity | Meaning | Required invariant |
 | --- | --- | --- |
 | World | Owner's collection of towns and global preferences | Has one owner-controlled policy root. |
-| Town | A project-oriented group of residents, roads, tasks, and a budget | Has exactly one current mayor assignment when operational. |
+| Project | Persistent purpose, goals, workspace references, accepted knowledge, and deliverables | Has a stable identity independent of its cities; defines shared scope and spending limits. |
+| Town | A city team of residents, roads, tasks, and an allocated budget within a project | Has one project and exactly one current mayor assignment when operational. A project can have several towns. |
+| Lead mayor assignment | Existing city mayor coordinating a project's shared goal | Has one current responsible mayor per top-level goal without requiring another management agent. |
 | Resident | Persistent agent identity | Has a stable ID independent of provider, model, name, and session. |
 | Mayor assignment | Current coordinator role for a town | References a resident plus a monotonically increasing leadership epoch. |
 | House | Resident's visual anchor and inspectable home | References exactly one resident; moving it does not move authority or change identity. |
 | Provider binding | A resident's execution configuration | Declares actual capabilities and permission profile. |
 | Session | Provider-specific context associated with a resident | Keeps provider IDs opaque and records continuity quality. |
-| Goal | Outcome requested by the owner | Has an acceptance definition, project scope, and budget. |
-| Task | A bounded piece of work within a goal | Has a stable ID, an owner, dependencies, and a result contract. |
+| Goal | Outcome requested by the owner | Belongs to one project and has an acceptance definition, responsible lead mayor, and budget. Cities can contribute to the same goal. |
+| Task | A bounded piece of work within a goal | Has a stable ID, owning project, assigned city and resident, dependencies, and a result contract. |
 | Run | One attempt or continuation of a task | Has a unique ID and provider-turn correlation. |
 | Activity | One observed operation within a run | May overlap other activities; does not independently determine task success. |
 | Road | A permitted application-mediated communication relation | Connects distinct residents or later town gateways; permissions are explicit. |
 | Message | A durable communication envelope | Has a stable ID, sender, recipient, lineage, route, and delivery status. |
 | Approval | A specific pending owner decision | Is bound to an exact action, authority revision, and expiry. |
 | Memory revision | A version of inspectable agent knowledge | Records provenance, author type, and the prior revision. |
-| Artifact | An output produced or referenced by work | Has an identifier, location, type, and integrity information when available. |
+| Deliverable | A promised reviewable output of a goal or task | Belongs to a project and references produced artifact versions, review evidence, and acceptance status. |
+| Artifact | An output produced or referenced by work | Has an identifier, project, source task and run, version, location, type, and integrity information when available. |
 | Acceptance | Authorized review decision about a task or goal result | Records reviewer and evidence. Only the owner accepts a top-level goal; a delegated reviewer may accept an internal task. |
 | Reward | Cosmetic progress earned from acceptance | Is unique for its acceptance identity and rule version. |
 | Election | Later proposal to replace the mayor | Freezes its electorate, candidate, threshold, and leadership epoch. |
@@ -292,6 +330,12 @@ Show a resident as Managed only when the runtime owns or has a verified control 
 The appearance of a process does not establish task progress. Parsing an undocumented transcript is an optional, version-specific observation fallback. Such events are marked inferred. An adapter failure changes observation quality; it does not erase the resident or complete its tasks.
 
 Changing a provider creates a new binding revision. Existing active runs retain their original binding until finished or explicitly interrupted. The new provider can receive selected persistent memory and task context, but the app must not promise lossless transfer of opaque provider state.
+
+The mayor selects from a catalog of approved execution profiles. Each profile identifies its provider and model, supported capabilities, permitted data destinations and tools, context and output limits, and concurrency constraints. Selection considers task difficulty, evidence requirements, privacy, deadline, current availability, and observed quality and resource measurements. Do not assume that the smallest model can perform a required tool workflow or that the largest available model is always necessary.
+
+The backend admits or queues the selected configuration using actual provider readiness, model-host capacity, system resource observations where available, and global limits across all cities. Mayor estimates cannot override those checks. New model downloads, providers, data destinations, or spending outside existing authorization require a scoped Chief decision. Several residents may share one loaded model service. Do not imply a fixed physical RAM partition per resident or promise that a token limit is an enforceable monetary cap. Record configuration changes and the reason for escalation, including any failed verification that led to a stronger profile.
+
+Automatic provisioning chooses the best known feasible configuration under the Chief's quality, privacy, cost, latency, and resource constraints. Maintain a bounded inventory of configured local hosts, installed models, actual capabilities, loaded models, host capacity, provider readiness, and supported local tools. Distinguish an installed local model from a cloud-backed model exposed by a local endpoint. Use cached measurements and bounded capability checks instead of launching inference merely to poll availability. Prefer an already loaded suitable model when that avoids needless loading, and adjust concurrency or context allowance only while preserving required instructions and task capability. Queue work rather than overcommit the machine. Respect other applications using the shared model host and never unload their work without authority. This is measured adaptive selection, not a claim of mathematically optimal allocation.
 
 ### 4.5 Independent state dimensions
 
@@ -374,6 +418,10 @@ The mayor's operating instructions must establish these behaviors:
 - Present a final result with review status and remaining uncertainty.
 - Never claim that a command succeeded solely because the mayor requested it.
 
+Every delegated task records one accountable resident, its assigned city, goal and plan revision, bounded scope, explicit exclusions where overlap is possible, input and source versions, expected deliverable, completion criteria, and dependencies. Before creating work, the mayor checks existing assignments and reusable results across the project. Peer mayors use that same project task record rather than independently launching the same assignment. A review or deliberately independent investigation has its own stated purpose and result, so it is distinguishable from redundant execution.
+
+The backend enforces unique dispatch identity and one active owner/attempt for ordinary tasks. Reassignment or a steering change does not authorize a replacement run while the prior execution remains uncertain; reconcile or confirm interruption first. Parallel child tasks have distinct scopes and output ownership. The shared-workspace write controls still apply across cities. Boundary conflicts return to the responsible mayor for resolution without asking the Chief to manually coordinate routine handoffs.
+
 The starter specialists have these responsibilities and bounded outputs:
 
 | Role | Responsibility | Expected result |
@@ -387,7 +435,7 @@ The starter specialists have these responsibilities and bounded outputs:
 
 Coding tasks may use builder, reviewer, and tester templates instead. A tester must report the command and observed result, not invent test success. A critic's objection is evidence for review, not automatic authority to block forever. The mayor can resolve a documented disagreement within the goal's policy or escalate it after the configured review rounds.
 
-Resident creation starts as a proposal. The owner may authorize the mayor in advance to create residents within an allowed role list and population cap. Default initial cap is twelve active residents per town. Creation does not automatically start a provider process. The new resident receives a home, default mayor road, a binding template, and explicit permissions inherited from the approved town policy without expansion.
+Resident creation starts as a proposal. The owner may authorize the mayor in advance to create residents within an allowed role list and population cap. Default initial cap is twelve active residents per town. Creation registers a real managed backend identity, home, default mayor road, provider binding, and explicit permissions inherited from the approved town policy without expansion. A runnable assignment dispatches actual provider work when a slot is available. Creating a resident without runnable work does not start inference. Separate identities do not require separate model weights or permanently running processes. The frontend renders the backend receipt and subsequent execution events; it cannot substitute a new character for deployment.
 
 The owner can modify or reject a plan, redirect an assignment, hold a queue, retire a resident, change a binding, and replace leadership. Each action creates a new revision. A stale mayor decision that refers to an earlier plan or leadership epoch must not overwrite the owner's change.
 
@@ -485,6 +533,12 @@ A saved note is not proof that a future provider will use it. The application de
 
 A skill manifest includes a stable ID, version, name, description, author/source, allowed use, required tool capabilities, content digest, and trust state. Skills are role knowledge and instructions. Their existence does not grant new tool permission.
 
+Populate the skill catalog from the owner's existing downloaded packages in configured local skill roots, including supported SKILL.md packages and their declared local references. Discover metadata and validate packages within those roots rather than scanning the entire filesystem. Under the configured trust policy, mayors automatically select applicable existing packages for themselves and their workers. The Chief need not manually copy or select a skill for each resident. Preserve package provenance, actual accepted instruction content or an accessible archived version, and the dependencies required for offline continuation; a digest alone does not reconstruct missing content.
+
+Distinguish a downloaded skill from an executable available capability. Check its tools, dependencies, data access, and selected model compatibility before assignment. A skill requiring a remote service is unavailable for that operation offline even if its instructions are on disk. Use applicable installed alternatives or ordinary role instructions where sufficient, and expose any missing capability accurately. Do not claim that a missing skill was installed, run download hooks automatically, or grant permissions merely because the package was found. Updates enter as new versions without changing active runs.
+
+Every mayor receives accepted coordination skills for goal scoping, decomposition, delegation, model/resource selection, dependency tracking, evidence review, recovery, and concise Chief updates. A specialist city's mayor also receives applicable domain skills. The lead mayor selects approved skillsets when provisioning a city mayor, and each mayor selects approved skillsets for its residents. The Chief does not configure each routine assignment manually. Validate required capabilities against actual tools and model support, record selected versions, and surface a missing capability instead of claiming expertise from the role name. Assignment from the approved catalog needs no new permission; importing or changing a skill remains subject to the existing trust policy.
+
 The owner may install a skill or accept a proposed skill revision. A resident can draft a procedure from a successful task, but that procedure remains proposed until the applicable trust policy accepts it. Never auto-execute a downloaded script because an agent placed it in `skills/`.
 
 On run preparation, select applicable accepted skill versions. Record their versions in the run. Updating a skill does not mutate the instructions of a run already in progress. A revoked skill is unavailable for future runs; its prior use remains part of history.
@@ -493,7 +547,7 @@ Skill import treats filenames and archive entries as untrusted. Reject path trav
 
 ### 4.15 Managed Codex integration
 
-Implement the first real adapter with a dedicated, locally managed Codex app-server process and its documented protocol. Prefer the documented standard-input/output transport for this child process. Do not expose a network listener as an installation default. Initialize the connection and validate the installed-version schema before sending operational requests.
+Implement the initial hosted-runtime adapter with a dedicated, locally managed Codex app-server process and its documented protocol. Prefer the documented standard-input/output transport for this child process. Do not expose a network listener as an installation default. Initialize the connection and validate the installed-version schema before sending operational requests. This adapter is not a prerequisite for operating the local-model agent loop offline.
 
 The adapter creates or resumes provider threads and starts turns. It translates streamed provider items into normalized activity records. It correlates interruption requests with actual interrupted or completed turn outcomes. `thread/resume` loads stored history; a subsequent `turn/start` begins continuation. Resume is not a frozen process restarting at the same instruction.
 
@@ -524,6 +578,8 @@ Existing Codex desktop sessions are not automatically owned by this process. Obs
 
 ### 4.16 Other providers and local models
 
+Local-model agent execution is a core first-release capability. The application, mayor, memories, skills, routing, decisions, and local tools must operate without internet access once the app, model host, required models, and local dependencies are installed. All essential UI assets ship locally. No hosted login, remote mayor, runtime download, or external service can be a prerequisite for a supported offline workflow.
+
 Define provider interfaces around capabilities and normalized behavior, not Codex method names. A second adapter should prove that the core does not depend on provider-specific IDs or event ordering. Use the fake provider as a development adapter, but do not claim that it establishes compatibility with another real product.
 
 An externally observed Claude Code session can appear through supported hooks after explicit configuration. Until a supported control channel is implemented and tested, it remains Observed. Its house can expose connection status and captured activity without offering unsupported Pause or Assign buttons.
@@ -532,7 +588,15 @@ A local model host supplies inference. It does not necessarily supply agent sess
 
 Before enabling a local model, validate response streaming, structured tool requests, malformed-output handling, maximum tool iterations, cancellation behavior, context limits, and resource use. A model that cannot reliably call the required tools may serve a narrower text-only role. It must not be advertised as fully compatible simply because it generates text.
 
-Keep resident role, provider, model, and execution location separate in the UI. The owner can choose a remote model for the mayor and local models for suitable specialists later. Record that assignment with each run. Changing a model mid-task requires an explicit continuation decision, especially if the new model cannot use the same tools.
+Keep resident role, provider, model, and execution location separate in the UI. The mayor automatically chooses compatible approved local or hosted profiles under project policy. The mayor itself must have a tested local execution profile. On loss of hosted availability, preserve its identity and reconstruct the next local turn from accepted instructions, selected skills, checkpoints, and known task state. Record every binding change and its reason. The backend can perform an authorized fallback without asking the Chief to select a model, but must validate required tools and reconcile the prior run first. Do not claim transfer of opaque provider state or identical model quality.
+
+Default Auto policy uses available permitted resources. An optional Local only setting excludes hosted inference even when connectivity returns. Readiness is per provider and tool, not a single global internet flag. Connectivity, authentication failure, quota exhaustion, model unavailability, and memory pressure can each change the feasible set. Load already installed models and queue or resize compatible work automatically within resource policy; do not download weights or activate a new paid service silently.
+
+When a hosted connection drops, hold its uncertain active operations until their outcomes can be reconciled. Do not resend a potentially mutating cloud task locally merely because a timeout occurred. Continue independent local tasks and locally safe analysis from confirmed checkpoints. When connectivity returns, reconcile pending provider state and queued network dependencies, then choose profiles for new runnable turns without unnecessary model switching or duplicate dispatch.
+
+Offline execution uses local files, installed tools, and retained or explicitly cached source material. Web search, uncached downloads, remote application actions, and cloud publication can remain blocked while other work continues. Keep source timestamps and label older evidence accurately. Do not substitute model recollection for fresh research or silently change the requested deliverable to fit an incapable model. If no suitable local configuration exists for a required step, preserve it with a concise blocker and a next action. Only changed scope, new authority, or increased limits require the compact Accept/Deny decision flow.
+
+The existing Orca native hosting adapter is text-only and rejects tool calls. Reusing its endpoint alone does not satisfy this requirement. Integrate a verified local tool-capable endpoint and City-controlled tool loop, or deliberately extend the existing hosting contract and its validation. Retain its current restrictions until that change is explicitly implemented and checked.
 
 Do not claim that 96 GB RAM makes every model practical. Model footprint, context cache, concurrency, and other applications consume shared resources. The visualizer's performance budget excludes inference but its resource inspector must identify that distinction. Optional model unloading when idle is an adapter capability, not a universal promise.
 
@@ -540,7 +604,7 @@ Do not claim that 96 GB RAM makes every model practical. Model footprint, contex
 
 An assignment command specifies the goal, target resident or mayor, project, workspace grant, deliverable, acceptance criteria, priority, and policy snapshot. Validate the workspace as an allowed location. Reject ambiguous or nonexistent targets. Return a command receipt before showing the task as started.
 
-Assignment to an already busy resident normally queues the task. It does not overwrite the active task or steer the active model implicitly. Steering is a separate, explicitly supported action with its own UI label and provider capability. Initial release may omit steering.
+Assignment to an already busy resident normally queues the task. It does not overwrite the active task or steer the active model implicitly. Steering an existing goal is required and remains distinct from creating another task. Use live provider steering only when its capability is verified. Otherwise hold affected new dispatch, request interruption of affected active work, and prepare a revised continuation after the provider confirms interruption or completion. Show pending or unknown state accurately until then. Preserve prior outputs, known external effects, and the original request. Steering does not undo completed actions.
 
 Pause first holds further scheduling, then interrupts a currently active provider turn. Preserve the pending result and any output already produced. Show Pausing while awaiting confirmation. An interruption request that races with natural completion can result in Review with the queue held. That outcome is legitimate and must not be rewritten as Paused.
 
@@ -567,13 +631,15 @@ Each card answers these questions:
 - Is the decision valid once, for the current turn, or for a longer provider-supported scope?
 - What happens if the owner denies it?
 
-Default primary actions are Allow once and Deny when the provider supports those decisions. Show longer-duration permission only when the provider actually supports it, with the scope stated. Do not relabel a session-wide grant as Allow once. No preselected approval is automatically submitted.
+The default presentation is a compact, theme-specific decision menu with Accept and Deny. Show the proposed action, a short reason, essential scope or cost, and the consequence of denial. Keep technical diagnostics and the remaining audit fields in expandable details. Critical action details remain visible before acceptance. Accept maps to the exact supported approval response described on the card, normally a single action. If a provider supports only a broader scope, state that scope prominently rather than implying one-time permission. No preselected approval is automatically submitted.
 
 Resolve using a compare-and-swap on the approval's current revision. Revalidate the pending provider request, the action digest, the run, and policy before sending the decision. The mayor or a malicious document cannot replace the action after the owner reviewed it. A changed action requires a new card.
 
 Use pending, responding, allowed, denied, expired, invalidated, and outcome unknown states. A provider notification that a server request resolved may reflect cleanup rather than an allow decision. Preserve the actual known outcome. On reconnect, invalidate requests that are no longer pending. Never replay an old Allow response blindly.
 
 Allow is an authorization decision, not evidence that the operation succeeded. The UI waits for execution events to show the result. Deny communicates the refusal and reason where supported. The task may adapt, wait for a new instruction, or fail with a clear explanation. Denial does not inherently fail unrelated work.
+
+After Deny, the backend prevents the refused operation and the mayor continues through an already authorized alternative when one exists. Otherwise show the specific blocker and retain completed work. Do not repeatedly rephrase the same refused request or acquire broader authority through another resident. Closing the menu leaves the decision pending; it neither accepts nor denies. All unresolved decisions remain accessible in one list. For a question with several possible directions, the mayor can recommend one concrete option for Accept or Deny, while the Chief can give another direction through the mayor conversation.
 
 Batch approval is deferred. Later, if added, each underlying action must remain individually identified and validated. A single "approve everything" button is not part of the first release.
 
@@ -612,6 +678,8 @@ If the process crashes before dispatch, the durable outbox can retry safely. If 
 SQLite transactions provide local consistency. They do not make filesystem changes, network effects, provider execution, and model responses one atomic transaction. Document each external operation's reconciliation behavior and identify operations that cannot be automatically reconciled.
 
 At startup, acquire the instance lock, check schema compatibility, run pending migrations from a backup, restore authoritative state, repair home projections, and reconcile nonterminal managed runs. Keep scheduling held until required reconciliation finishes. Replaying stored events rebuilds views only; it must never redispatch historical commands.
+
+Persist useful continuation checkpoints at confirmed task, tool, delivery, approval, and plan-revision boundaries. Retain the resident identity, current instructions and selected skills, relevant memory revisions, received outputs and partial drafts, source and artifact references, completed steps, dependencies, known side effects, pending decisions, and the next intended step. Preserve the recorded history separately from its bounded continuation summary. An interruption must not erase the resident's knowledge or make completed results inaccessible. Provider reconnection or a reconstructed context may be needed, and unreceived provider output cannot be promised recoverable. The UI reports the last confirmed checkpoint and any unresolved state instead of implying exact process freezing.
 
 Use structured error codes including unsupported capability, stale revision, denied policy, budget exhausted, missing dependency, invalid route, queue full, provider unavailable, provider incompatible, storage unavailable, and outcome unknown. Pair each code with a concise user message and an optional sanitized diagnostic.
 
@@ -678,7 +746,7 @@ Restore progression from its ledger without rerunning tasks or replaying approva
 
 The visual target is an artistically finished evolving district or domain. Preserve the readable spatial relationships of Hamlet, but do not copy its medieval palette, cottages, river, or circular layout as mandatory ingredients. Low polygon count is an optimization option, not an aesthetic objective. Avoid generic toy villages and interchangeable primitive buildings.
 
-Use an elevated camera that reveals resident bases, routes, couriers, and construction without requiring camera management. Orthographic projection is the first candidate. Tune scale and angle against the compact overlay as well as the expanded view. Clearly differentiate the central coordinator base and six specialist homes through silhouettes and meaningful props.
+Use an elevated camera that reveals resident bases, routes, couriers, and construction without requiring camera management. Orthographic projection is the first candidate. Tune scale and angle against the compact overlay as well as the expanded view. Clearly differentiate the central coordinator base and task-created specialist homes through silhouettes and meaningful props.
 
 For Cyberpunk, build a compact inhabited city block with a fixer operations hub, netrunner den, specialist workshops, safehouses, roof equipment, and readable street or elevated transit connections. Use layered industrial architecture, dark charcoal surfaces, selective electric yellow and cyan, and restrained red alerts. Signs, cables, vents, and light strips should support the district's composition. Resident silhouettes can use coats, visors, cybernetic accents, and distinct tools. Couriers are runners or drones. Avoid making every surface glow or covering work areas with decorative signage.
 
@@ -758,6 +826,8 @@ Theme switching keeps resident IDs, task states, roads, memory, and progression 
 
 The town occupies the main screen. Use lightweight controls around it and contextual inspectors rather than permanent dashboard columns. The owner should be able to view the town without having to dismiss several panels every time.
 
+Apply a consistent compact-first pattern to every menu: a plain title, a brief current state, and the actions relevant to that state. Keep primary controls directly available instead of hiding basic functionality inside More details. Put history, technical diagnostics, advanced configuration, and full transcripts behind an explicit expansion. Use familiar action labels and avoid a new permanent panel for each backend concept. Opening details preserves the current project, resident, and task context. Theme styling must preserve legibility, focus, and action hierarchy.
+
 | Surface | Required content and behavior |
 | --- | --- |
 | Ambient overlay | Meaningful town crop, compact attention count, optional selected resident; click-through by default |
@@ -772,7 +842,7 @@ The town occupies the main screen. Use lightweight controls around it and contex
 | Settings | Provider bindings, workspaces, overlay behavior, motion, sound, privacy, retention, exports |
 | Diagnostics | Versions, connection health, event gaps, resource measurements, sanitized logs, compatibility results |
 
-Click a house to select its resident. A second explicit action opens the inspector. Selecting a courier or road opens its exchange information. Empty-space dragging pans the expanded camera; wheel or trackpad zoom follows platform expectations. Keep initial camera rotation fixed, with an optional resettable quarter-turn control only if it improves readability.
+Click an agent or its house to select the resident and immediately open the compact current-work menu. The roster provides the same action when a resident is indoors, occluded, or off screen. Details and Look inside remain secondary actions. Selecting a courier or road opens its exchange information. Empty-space dragging pans the expanded camera; wheel or trackpad zoom follows platform expectations. Use the existing separate orbit gesture and reset control without turning a drag into a selection or teleport.
 
 Keyboard navigation must reach the mayor, resident list, tasks, and approval queue without canvas hit testing. Escape closes the current inspector before returning to Ambient mode. Avoid intercepting normal text-editing shortcuts inside inputs. A configurable command shortcut enters or leaves interactive mode, with a menu-bar fallback.
 
@@ -780,7 +850,7 @@ Dragging a resident onto another house is not an implicit merge. Dragging a task
 
 ### 4.31 House inspector details
 
-The house inspector begins with resident name, role, provider/model, managed or observed status, connection health, and current task. It shows the last confirmed event time when the state is stale. A resident's friendly name never hides which real provider will receive a command.
+The compact agent or house menu begins with resident name and role, current assignment, observed activity, and a brief latest confirmed step or blocker. Show project or city context when needed to distinguish work. Provide direct Results, Skills, and Memory access, with history, provider/model, connection health, queues, and technical details on expansion. Mark stale observations without filling the initial menu with diagnostics. The provider receiving a command remains inspectable before it is sent.
 
 Provide tabs or equivalent accessible navigation for Work, Notes, Skills, and History. Work shows current and queued tasks with valid controls. Notes shows accepted entries, proposed updates, conflicts, and the last context bundle. Skills shows selected versions and required capabilities. History shows sessions and task attempts with retained summaries and references.
 
@@ -795,6 +865,10 @@ The mayor conversation is the primary entry for high-level goals. Keep the origi
 Default behavior can start work immediately when it fits the existing workspace, capability, and budget policy. Do not require the owner to approve every harmless decomposition. Ask for a decision only when the plan changes scope, needs new authority, exceeds a limit, or encounters a meaningful unresolved tradeoff.
 
 The owner can edit a task before dispatch, hold or reorder queued work, and request a plan change. Editing an active task is not silently treated as editing an unstarted task. Offer continuation/steering only if the provider supports it, or interruption followed by a revised attempt.
+
+Progress questions return a concise account of the current goal, confirmed completed work, active assignments, blockers or decisions, the next step, and available usage against limits. Base it on the latest backend records and identify stale or uncertain observations. Do not invent completion percentages or arrival times from animation. Opening a progress summary can read a snapshot without inference; an explicit conversational question can request a bounded mayor turn.
+
+Direction changes create a new revision of the goal or its plan while preserving the goal's identity, with the Chief's latest instruction taking precedence. The mayor summarizes what changed, revises only affected assignments, and preserves reusable results. Mark dependent work stale when its assumptions changed. Routine authorized changes proceed without another approval. A change requiring new authority or resources uses the same compact decision menu. Keep the original request and revision history inspectable, and do not claim that an active agent received the change before the provider acknowledged it or began a revised continuation.
 
 The final result shows deliverable links, a concise summary, relevant evidence, critic findings that remain unresolved, and the acceptance action. Avoid ceremonial completion messages from every specialist. A task can be complete while the overall goal remains incomplete because its other dependencies are unfinished.
 
@@ -840,9 +914,9 @@ In Cyberpunk, growth can add a workshop annex, a connected rooftop, a transit st
 
 ### 4.36 Agent mergers
 
-Implement mergers after the first town is reliable. A merge creates a successor resident with links to both source identities. It does not overwrite one agent's history with another's or concatenate all notes into an assumed coherent memory.
+Mergers are required lifecycle behavior. Implement them after the first town is reliable. A merge creates a successor resident with links to both source identities. It does not overwrite one agent's history with another's or concatenate all notes into an assumed coherent memory.
 
-A merge proposal includes sources, proposed successor role and binding, reason, estimated benefit, unresolved conflicts, affected tasks, roads, and skills. The owner approves by default. An optional mayor policy may later allow narrow mergers, but cannot expand permissions or bypass the same validation.
+A merge proposal includes sources, proposed successor role and binding, reason, estimated benefit, unresolved conflicts, affected tasks, roads, and skills. The mayor can commit mergers within the Chief's authorized staffing policy. A merger outside that scope requires a Chief decision. No merger expands permissions or bypasses validation.
 
 Require source residents to be quiescent or explicitly interrupt their work first. Review pending messages and approvals. Never migrate a provider approval to a different identity. Pending messages can be redirected only through an explicit mapping recorded in the merge transaction; senders can inspect that redirection.
 
@@ -856,25 +930,35 @@ Manual owner replacement of the mayor is required before agent-initiated electio
 
 A leadership change holds new coordinator dispatch, records the current plan and unresolved decisions, changes the mayor assignment transactionally, and supplies the successor with a handover context bundle. In-flight specialist work can continue if its authority remains valid. Old mayor tool calls that carry the prior epoch cannot create new assignments or alter policy after replacement.
 
-Agent-initiated elections are an opt-in later feature. A proposal specifies one eligible candidate, a reason, supporting task evidence, the current leadership epoch, an immutable electorate, a deadline, and the applicable town policy. Avoid free-running political conversations or scheduled elections that consume inference without a work-related reason.
+The owner deferred agent-initiated elections to future work. They are not a current release requirement and must not generate ballots, political conversations, or background model calls in the current build. The following rules preserve the proposed design for future review. A proposal specifies one eligible candidate, a reason, supporting task evidence, the current leadership epoch, an immutable electorate, a deadline, and the applicable town policy. Avoid free-running political conversations or scheduled elections that consume inference without a work-related reason.
 
 Default electorate is all active, nonarchived residents with voting eligibility at proposal creation, including the current mayor and the candidate. Freeze it for that election. A two-thirds result means at least the ceiling of two times the electorate size divided by three affirmative votes, not two-thirds of only the votes cast. With seven eligible residents, five affirmative votes are required. Abstentions and absent votes do not count as yes.
 
 Allow one recorded ballot per eligible resident and election. A ballot can be changed before closure only through a new version with history retained. New residents created after the election begins cannot vote in it. The mayor cannot alter the electorate by spawning allies during a vote.
 
-By default, a passing election creates a pending leadership proposal for owner confirmation. The owner can opt into automatic ratification within a fixed policy, and can always veto or replace leadership directly. This is an intentional adaptation of the reference's vote rule. It preserves owner authority and avoids claiming that model consensus is evidence of quality.
+A passing two-thirds vote commits the leadership change within the applicable policy without a separate owner-confirmation step. The former mayor remains an ordinary resident with the same identity, skills, notes, and history. The Chief can always overrule or replace leadership directly. Model consensus is not evidence of task quality.
 
 Only one election may be open per town and leadership epoch. Candidate retirement, a manual leadership change, or a policy change that invalidates eligibility cancels the election with a recorded reason. A failed or expired vote does not erase history or punish dissenting residents. Election outcomes grant no additional tool privileges.
 
 ### 4.38 Multiple towns and inter-town roads
 
-Multiple towns are later work. A town groups projects, residents, context, permissions, and budgets. The same owner can inspect all towns while keeping project knowledge separate. A resident belongs to one active town initially; moving it is an explicit operation with workspace and memory review.
+Multiple cities and task-driven city founding are required lifecycle behavior. Separate project identity from city identity: a project owns the shared purpose, goals, accepted facts, workspace references, deliverables, and spending limits. A city is a team within that project, with a mayor, residents, scoped context, permissions, and a budget allocation. Initially each city belongs to one project, while a project may have several cities. Do not silently reuse a city's private project context for another project.
+
+The original mayor remains lead mayor for the top-level goal and the Chief's normal contact. It coordinates peer city mayors through roads, combines their progress, and owns the integrated result review. This is an assignment to an existing mayor, not a new layer of management agents. Each city mayor delegates its scoped work. Work bundles remain ordinary tasks and dependencies under the same goal, without a mandatory new hierarchy in the UI.
+
+The lead mayor generates an additional city when a substantial workstream benefits from a separate team, within authorized city and resource limits. Minor subtasks can stay with one resident in the existing city. A new city starts with its mayor and gains specialist homes through assignment. For an app launch, development and marketing cities can share the product brief while exchanging verified feature descriptions, release status, campaign drafts, and review requests. Cross-city dependencies refer to actual deliverable versions rather than guesses about another team's progress. A resident belongs to one active city initially; moving it is an explicit operation with workspace and memory review. Creating cities does not increase project or global budgets or bypass shared-workspace write controls.
 
 Inter-town roads connect explicit gateways, initially the mayors or designated gateway residents. A message crosses only if the source export policy and destination import policy both permit its purpose and content class. The sender's workspace access does not transfer to the receiving town.
 
 Keep a cross-town message's original identity, route, provenance, and task correlation. Expose both town names in the approval and message views. The receiving town may accept a bounded subtask under its own budget or return a refusal. It does not silently inherit the source town's authority or spending policy.
 
 The initial multi-town interface can switch between separate scenes and show a simple region map. Do not simulate all towns at full frame rate while only one is visible. A region-level summary shows active work and approvals without loading every house's art and history into memory.
+
+Keep the ordinary UI to a project picker and access to the lead mayor, Decisions, and Results. The project can open on its last city; its region map and other mayors remain available on demand. A new project can be requested through the mayor or a compact New project action. Infer a sensible name and apply existing workspace and policy defaults, asking only when the project boundary or authority is unresolved. Keep different projects' tasks, notes, artifacts, and decisions separate. Cross-project sharing requires an explicit permitted exchange, even when a road exists.
+
+Results is a project-wide list of promised and produced deliverables. Each entry shows a plain name, draft/review/accepted state, responsible task or city, and Open. Add Reveal in folder, version history, and review evidence on expansion where applicable. Store files in the project's approved location and retain references centrally instead of copying every output into every home. Agent menus link to their task's result using the same deliverable record. Changes in city membership, retirement, or mergers do not move or hide the project's outputs.
+
+Preserve checkpoints, plan revisions, dependencies, accepted context, artifact references, and unresolved decisions when work stops. Resuming reconciles uncertain external actions and stale evidence before continuing the remaining work; retaining a transcript alone is insufficient. Reuse the same project and goal identities. Never automatically repeat a publication or other completed side effect merely because an agent was recalled or the application restarted.
 
 ### 4.39 Performance and observability
 
@@ -909,7 +993,7 @@ Store writable data in the platform's appropriate application-data location, not
 
 First-run setup offers Demo and Connect provider. Demo immediately displays a convincing town and replayable work scenario with a persistent Demo indicator. Connecting a provider checks installation/version, authentication status, workspace choice, permission policy, and the real integration capabilities. Do not install a provider or alter its configuration silently.
 
-Setup creates the starter resident identities and houses without waking all models. The first real task can be deliberately small and disposable. Once the provider passes capability checks, the town can use real work. Never erase the owner's existing project files to prepare a demo workspace.
+Setup creates only the initial mayor identity and house, plus the Chief's separate sanctuary. Specialists are provisioned through task assignment. The first real task can be deliberately small and disposable. Once the provider passes capability checks, the town can use real work. Never erase the owner's existing project files to prepare a demo workspace.
 
 Uninstall and reset instructions distinguish application binaries, town data, provider configuration, and model assets. Removing the visualizer should not delete unrelated Codex or local-model data. Hook installation, if used, must be reversible without removing other hooks.
 
@@ -1012,8 +1096,8 @@ Each acceptance case below must have reproducible evidence before its milestone 
 | AT-56 | Inspect a house using only keyboard and screen reader | Task, notes, skills, history, and valid controls are operable without the canvas. |
 | AT-57 | Replace the mayor manually | Exactly one new epoch becomes current; stale former-mayor commands cannot alter the plan. |
 | AT-58 | Merge two residents later | A successor preserves lineage and conflicts; originals remain archived; permissions do not widen silently. |
-| AT-59 | Run a seven-resident election later | Four yes votes do not pass; five do, subject to configured owner ratification. |
-| AT-60 | Spawn a resident during an open election | It cannot enter the frozen electorate. |
+| AT-59 | Future election feature only: run a seven-resident election | Four yes votes do not pass; five do. The former mayor remains a resident, and the Chief retains override authority. Not a current release gate. |
+| AT-60 | Future election feature only: spawn a resident during an open election | It cannot enter the frozen electorate. Not a current release gate. |
 | AT-61 | Send across towns later | Both export and import policies apply, and the receiving town's budget remains authoritative. |
 | AT-62 | Leave the town idle for an hour | No unrequested inference calls occur and renderer behavior follows the selected quality mode. |
 | AT-63 | Complete an internal specialist task | The authorized reviewer can accept it and release dependent work without an owner click or goal reward. |
@@ -1024,6 +1108,27 @@ Each acceptance case below must have reproducible evidence before its milestone 
 | AT-68 | Advance and reopen qualifying accepted goals | Both themes show the corresponding persistent settlement stages with inspectable causes and no permission changes or duplicate reward. |
 | AT-69 | Inspect Solo Leveling controls at compact and expanded sizes | System frames match the supplied visual direction while text and actionable status stay legible, including reduced-motion mode. |
 | AT-70 | Select the rendering approach | The recorded comparison uses the same representative workload; the chosen approach meets the native resource and visual gates. |
+| AT-71 | Start a new city without a task | Only the mayor is provisioned as an agent; the Chief remains separate. Specialists and their homes appear through authorized task-driven provisioning. |
+| AT-72 | Accept a compact binary decision | The menu shows action, reason, essential scope, and denial consequence; Accept resolves only the exact current request through a supported response. Actual success waits for execution evidence. |
+| AT-73 | Deny a request or close its menu | Deny prevents that operation and preserves permitted independent work; closing leaves it pending in the shared list. The mayor does not repeat the refused operation through another resident. |
+| AT-74 | Ask the mayor for progress during a blocked or disconnected task | The answer agrees with confirmed backend work and identifies blockers, stale observations, and next steps without inventing completion percentages or timing. |
+| AT-75 | Steer work through a provider without live steering | Affected dispatch is held, interruption or completion is reconciled, and a revised continuation receives the new instructions. History and known external effects remain visible. |
+| AT-76 | Mayor selects a profile unavailable or over capacity | The backend rejects the incompatible choice or queues capacity-bound work under global limits across cities; it does not download models, widen data access, or increase spending without existing authority or a Chief decision. |
+| AT-77 | Select an agent, its house, or its roster entry | Each opens the same compact current-work menu using backend state, with expandable details and links to the resident's skills, memory, and task results. |
+| AT-78 | Delegate one project goal across development and marketing cities | Distinct mayors and scoped task bundles cooperate through authorized roads; one lead mayor reports the integrated outcome, with shared dependency revisions and no budget multiplication. |
+| AT-79 | Switch projects or retire an agent after it produces a result | Tasks and private context stay separated by project; the deliverable remains accessible in its project's Results view with version and review status. |
+| AT-80 | Provision a city mayor and its specialists with skillsets | Approved versions and required capabilities are recorded and checked without per-agent Chief configuration; an unavailable tool or unapproved skill is not silently granted. |
+| AT-81 | Resume a paused multi-city goal | Checkpoints and known side effects reconcile before remaining work proceeds; the same project, goal, deliverables, and valid dependencies are retained without replaying completed actions. |
+| AT-82 | Inspect ordinary menus at compact and expanded sizes | Current work and relevant primary controls are immediately available; additional detail opens on demand without losing context or creating permanent panel clutter. |
+| AT-83 | Two city mayors propose overlapping work or reassign an uncertain task | Shared assignments expose the conflict; only one valid dispatch owns the ordinary task, and replacement work waits for reconciliation. Intentional independent review is separately scoped. |
+| AT-84 | Interrupt work after confirmed partial progress | Resident history, received drafts, instructions, selected skills, artifacts, and pending work survive. Continuation uses the last confirmed checkpoint and exposes uncertainty without replaying completed effects. |
+| AT-85 | Start with external networking unavailable | Installed app, local mayor, worker, local tools, decisions, memories, and results function without cloud authentication or downloads. A bounded offline goal completes with real tool evidence. |
+| AT-86 | Lose connectivity during hosted execution | Uncertain side effects remain held for reconciliation; independent compatible work continues locally with retained identity and checkpoints, without manual model switching or duplicate execution. |
+| AT-87 | Request fresh web research while offline | Local or cached evidence is used only with accurate provenance and age. Unavailable sources remain explicit dependencies; local work continues without invented fresh findings. |
+| AT-88 | Change memory pressure, model readiness, or hosted quota | Resource admission selects another compatible approved profile or queues work under global limits, preserving required instructions and tools. No unsupported optimality claim or resource overcommit occurs. |
+| AT-89 | Restore connectivity or choose Local only | Outstanding external work reconciles before dispatch; Auto may use permitted hosted profiles for new work, while Local only continues to exclude hosted inference. |
+| AT-90 | Provision residents using downloaded skill packages while offline | Configured local roots supply applicable validated packages and required local references. Selected versions and content are retained without network fetches, manual per-agent copying, or new implicit tool permissions. |
+| AT-91 | A downloaded skill needs an unavailable tool or service | The unavailable capability is identified; a compatible installed alternative is used when possible. The system does not claim that downloading instructions supplied the missing tool or online access. |
 
 ### 5.3 Visual acceptance rubric
 
@@ -1053,7 +1158,7 @@ If a budget fails, identify the measured source and make a targeted change. Cand
 
 A feature is done when its externally visible behavior works with authoritative state, its error and recovery cases are represented, its relevant acceptance checks pass, and its limitations are documented. A button wired only to a toast is not done. A fixture provider passing tests does not mean a real provider is integrated. A browser screenshot does not mean an always-on-top macOS overlay works.
 
-The first usable release is done only after a real owner goal passes through managed delegation, road messaging, memory preparation, at least one genuine control or approval interaction, result review, owner acceptance, and restart recovery. All of that must occur in a town that passes the visual rubric and on a native build whose resource use has been measured.
+The first usable release is done only after a real owner goal passes through managed delegation, road messaging, memory preparation, at least one genuine control or approval interaction, result review, owner acceptance, and restart recovery. A supported local goal must complete with external networking unavailable, including a local mayor and genuine local tool use. Loss and restoration of hosted connectivity must preserve task identity and avoid duplicate effects. All of that must occur in a town that passes the visual rubric and on a native build whose resource use has been measured.
 
 ## 6. Out of scope and staged features
 
@@ -1063,15 +1168,19 @@ Do not build universal agent discovery, unrestricted control of every existing a
 
 Do not promise exact process suspension, rollback of external effects, universal road-only security isolation, perfect memory transfer across providers, zero GPU cost, or a hard spend cap without provider enforcement. Use the explicit semantics in this document.
 
-Do not require elections, mergers, multiple towns, a medieval theme, large themed asset libraries, model downloads, or cross-platform overlay parity before the first useful settlement can ship. Both preferred themes need a compact working treatment, not a full game world. Preserve extension points for the deferred features and follow the milestone sequence below.
+The first useful single-city milestone can precede mergers and multi-city execution. Those remain required lifecycle behavior under section 2.6 and must be reported as pending until implemented. Agent-initiated elections are future work outside the current build scope. A medieval theme, large themed asset libraries, model downloads, and cross-platform overlay parity are not prerequisites. Both preferred themes need a compact working treatment, not a full game world.
 
 Do not rebuild a provider's full editor, terminal, file browser, or transcript interface unless the town's workflow needs that detail. Prefer validated source links or focused inspectors. The town coordinates and explains work; it does not have to replace every tool the owner already uses.
 
 ### 6.2 Deferred but specified
 
-Mergers, elections, cross-town gateways, additional managed providers, local-model execution, deeper customization, larger themed districts, and optional medieval art remain later work. The compact Cyberpunk and Solo Leveling versions are first-preview requirements.
+Mergers and task-driven city founding with cross-town gateways are required later implementation milestones. Agent-initiated elections are a future extension, not a required milestone in the current build. Additional providers beyond the initial local and hosted adapters, deeper customization, larger themed districts, and optional medieval art remain later work. Local-model execution and offline fallback are core first-release requirements. The compact Cyberpunk and Solo Leveling versions are first-preview requirements.
 
 Strong operating-system isolation between residents is a separate security project. The initial application enforces its own message broker and provider policy. If a later release claims stronger isolation, it must test filesystem, process, network, and shared-workspace channels explicitly.
+
+Phone progress access is low-priority future work, not a current release requirement. Start with a paired, read-only companion showing project progress, agent activity, decision counts, and result summaries. The Mac remains the authoritative execution and data store. This does not require rendering every city on the phone or running another agent backend there.
+
+Separate internet loss from lack of a device-to-device connection. With reachable local Wi-Fi or another tested local connection, a paired phone can read the Mac's updates without internet. With no communication path at all, show the last synchronized snapshot and a clear last-updated time; live updates are impossible until a connection returns. Synchronize newer revisions when the app is opened or reconnects, without promising continuous mobile background execution. Access while away may later use an explicitly enabled authenticated private connection or a narrowly scoped encrypted relay when the Mac is reachable. Neither path makes a disconnected Mac remotely reachable. Do not expose the desktop control API, provider credentials, raw memory, or all project files by default. Phone command submission and offline approval queuing require a separate future design and remain outside this initial read-only companion.
 
 ## 7. Delivery plan and agent execution instructions
 
@@ -1081,14 +1190,14 @@ Implement in the following order. Milestones are dependency gates, not permissio
 
 | Milestone | Build | Exit evidence |
 | --- | --- | --- |
-| M0 Environment and integration proof | Validate native toolchain, pin provider schema, create a minimal managed turn client and town-tool bridge | Real assignment, interruption, continuation, approval, and message-tool identity checks pass in a disposable workspace |
+| M0 Environment and integration proof | Validate native toolchain, installed local model host and capable models; prove a bounded local agent/tool loop and hosted adapter when available | A real offline mayor and worker complete a local tool workflow; exposed assignment, interruption, continuation, approval, and message identity capabilities pass in a disposable workspace |
 | M1 Domain core and durable state | Residents, towns, tasks, command receipts, scheduling, SQLite, outbox, fake provider, recovery | Core lifecycle, deduplication, crash, dependency, and budget checks pass |
 | M2 Communication and memory | Mayor roads, authenticated router, inboxes, home revisions, context selection, skill manifests | Real messages follow valid routes; next run receives selected memory; conflicts and projection recovery work |
 | M3 Visual vertical slices | Cyberpunk district and Solo Leveling shadow domain with homes, couriers, lighting presets, selection, and contextual controls; compare representative 3D and 2.5D approaches | Both art directions read as distinct evolving places; chosen renderer passes native performance baseline and visual rubric |
-| M4 Native workflow | Ambient/Command modes, menu bar, shortcut, unified approvals, goal planning, owner overrides | One real goal completes through the town; native focus, display, and sleep/wake checks pass |
-| M5 Personal preview | Both compact theme versions, packaging, diagnostics, export/import, accessibility, retention, progression, eight-hour trial | First-release definition of done passes in both themes with measured budgets and documented provider limits |
-| M6 Governance and scale | Manual mayor handover first, then mergers, opt-in elections, multiple towns | Later acceptance checks pass without changing historical identities or weakening policy |
-| M7 Providers and expanded art | Second managed runtime, selected local-model loop, larger districts and character variety; optional medieval exploration | Provider capabilities remain accurate; expanded art preserves work state and measured budgets |
+| M4 Native workflow | Ambient/Command modes, menu bar, shortcut, unified approvals, goal planning, owner overrides, automatic model selection and offline fallback | One real offline goal completes through the town; connectivity loss preserves work and local execution; native focus, display, and sleep/wake checks pass |
+| M5 Personal preview | Both compact theme versions, packaging, diagnostics, export/import, accessibility, retention, progression, eight-hour trial, disconnected startup and reconnection | First-release definition of done passes in both themes online and offline with measured budgets and documented provider limits |
+| M6 Governance and scale | Manual mayor handover, mergers, task-driven city founding and inter-city roads; agent voting deferred beyond the current build | Required lifecycle checks pass without changing historical identities or weakening policy |
+| M7 Providers and expanded art | Further providers and local-host integrations beyond the required initial adapters, larger districts and character variety; optional medieval exploration | Provider capabilities remain accurate; expanded art preserves work state and measured budgets |
 
 M0 and a small visual rendering experiment can proceed independently, but do not spend the entire effort polishing art before proving control. Conversely, do not leave the scene as programmer boxes after the integration succeeds. Both are release gates.
 
@@ -1096,7 +1205,7 @@ M0 and a small visual rendering experiment can proceed independently, but do not
 
 Read this specification and the supplied references. Inspect the destination repository and any existing instructions before changing it. Establish whether T3 has a native macOS execution environment or only a browser/build environment. Record the difference in the implementation status.
 
-Create the smallest project that can compile a Rust core and display a native window with a typed command round trip. Establish a fake provider trace for development. In a disposable allowed workspace, run the real Codex compatibility proof and record exact versions and results.
+Create the smallest project that can compile a Rust core and display a native window with a typed command round trip. Establish a fake provider trace for development. In a disposable allowed workspace, prove the real local-model mayor and bounded tool workflow without internet, then run the Codex compatibility proof when that provider is available. Record exact versions, capability limits, and results. Hosted-provider unavailability must not block local development or offline operation.
 
 Produce a concrete first deliverable: a working application shell, a resident identity, one assignable task, a real or explicitly unavailable provider connection, a pause/continue demonstration when supported, and a short integration report. Do not end the session with only another architecture document if the environment can execute the build.
 

@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+export PATH="/opt/homebrew/bin:$PATH"
+export CITY_PREVIEW_TOKEN="$(openssl rand -hex 32)"
+./scripts/cargo build -p city-core --features preview --bin city-preview
+./target/debug/city-preview &
+city_preview_pid=$!
+node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5180 --strictPort &
+city_vite_pid=$!
+trap 'kill "$city_preview_pid" "$city_vite_pid" 2>/dev/null || true' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+wait "$city_vite_pid"

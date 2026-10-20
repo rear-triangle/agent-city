@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "builtAtUtc": "2026-10-18T03:20:53.258345+00:00",
+  "architecture": "arm64",
+  "bundle": "target/release/bundle/macos/Agent City.app",
+  "archive": "target/release/bundle/Agent City-0.2.0-arm64.zip",
+  "zipBytes": 5288723,
+  "zipSha256": "99f92a7abb8227f9fb68b6f95157d525a9dff42484244e12bce22c5b7cc6ca17",
+  "sourceInputs": 119,
+  "sourceInputsSha256": "09235647c9536b15a4fa86723ee1becebf8dd50a283240098f17662cae4abd70",
+  "signing": "Local ad hoc signature verified with codesign --verify --deep --strict; not Developer ID signed or notarized.",
+  "tests": {
+    "runtime": 18,
+    "providerProtocol": 1,
+    "integration": 13,
+    "format": "passed",
+    "clippy": "passed",
+    "typescript": "passed",
+    "webBuild": "passed",
+    "nativeBuild": "passed"
+  },
+  "realFixtures": {
+    "offlineWorkflow": "passed; loopback-only runtime sandbox",
+    "restartRecovery": "passed",
+    "hostedInterruptionContinuationApproval": "passed",
+    "hostedDisconnection": "passed"
+  },
+  "releaseAcceptance": "incomplete; native/browser automation unavailable and remaining acceptance gates documented in docs/BUILD-STATUS.md"
+}

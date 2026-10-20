@@ -1,20 +1,27 @@
 {
-  "name": "agent-city-prototype",
-  "version": "0.1.0",
+  "name": "agent-city",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "prototype": "vite --host 0.0.0.0 --port 5173",
-    "dev": "npm run prototype",
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "desktop": "./scripts/desktop dev",
+    "desktop:build": "./scripts/desktop build",
+    "preview:runtime": "./scripts/preview-runtime",
+    "test": "./scripts/cargo test -p city-core",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 5173"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "2.12.3",
     "@types/three": "0.186.0",
     "typescript": "7.0.2",
     "vite": "8.3.4"
   },
   "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "@tauri-apps/plugin-dialog": "2.8.3",
     "three": "0.186.1"
   }
 }

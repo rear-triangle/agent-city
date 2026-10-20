@@ -1,0 +1,1 @@
+Recovered accepted fixture goal b69a2f79-b686-4e70-85d1-acb4d08a2c8c with 4 completed runs, retained notes, exact tool receipts, one active acceptance, and recommendation.txt. No scheduler or provider was started.

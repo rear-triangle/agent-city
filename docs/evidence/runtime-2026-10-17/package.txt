@@ -1,0 +1,16 @@
+target/release/bundle/macos/Agent City.app: replacing existing signature
+target/release/bundle/macos/Agent City.app: valid on disk
+target/release/bundle/macos/Agent City.app: satisfies its Designated Requirement
+Executable=/Users/alvarobalkowski/Documents/agent-city/agent-city/target/release/bundle/macos/Agent City.app/Contents/MacOS/agent-city
+Identifier=dev.agentcity.desktop
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20400 size=25102 flags=0x2(adhoc) hashes=778+3 location=embedded
+Signature=adhoc
+Info.plist entries=14
+TeamIdentifier=not set
+Sealed Resources version=2 rules=13 files=0
+Internal requirements count=0 size=12
+Total signatures=1
+Chosen signature=1
+target/release/bundle/macos/Agent City.app/Contents/MacOS/agent-city: Mach-O 64-bit executable arm64
+99f92a7abb8227f9fb68b6f95157d525a9dff42484244e12bce22c5b7cc6ca17  target/release/bundle/Agent City-0.2.0-arm64.zip

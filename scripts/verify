@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+export PATH="/opt/homebrew/bin:$PATH"
+./scripts/cargo fmt --all -- --check
+./scripts/cargo test -p city-core
+./scripts/cargo clippy --workspace --all-targets -- -D warnings
+npm run build

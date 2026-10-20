@@ -1,0 +1,2 @@
+[DEBUG-ambient-focus] before active=true key=true can_key=true ignores_mouse=false visible=true front_pid=Some(29949) self_pid=29949
+[DEBUG-ambient-focus] after-show active=true key=true can_key=false ignores_mouse=false visible=true front_pid=Some(29949) self_pid=29949

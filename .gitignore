@@ -1,3 +1,7 @@
 node_modules/
 dist/
 .DS_Store
+.tools/
+target/
+.city-dev/
+src-tauri/gen/

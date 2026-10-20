@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Agent City", "version": "0.2.0", "identifier": "dev.agentcity.desktop",
+  "build": {"beforeDevCommand":"npm run dev","devUrl":"http://localhost:5173","beforeBuildCommand":"npm run build","frontendDist":"../dist"},
+  "app": {
+    "windows": [{"label":"main","title":"Agent City","width":1280,"height":800,"minWidth":420,"minHeight":280}],
+    "security": {"csp":"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'self'; frame-src 'none'"}
+  },
+  "bundle": {"active":true,"targets":["app"],"icon":["icons/agent-city-v1/32x32.png","icons/agent-city-v1/128x128.png","icons/agent-city-v1/128x128@2x.png","icons/agent-city-v1/icon.icns"],"category":"Productivity","shortDescription":"A persistent city of working agents","macOS":{"minimumSystemVersion":"13.0"}}
+}

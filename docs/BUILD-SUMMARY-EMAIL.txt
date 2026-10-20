@@ -1,0 +1,26 @@
+To: alvaro.balkowski@gmail.com
+Subject: Agent City: approved scope and implementation plan
+
+Alvaro,
+
+You approved the Agent City prototype and authorized production implementation. This summary records the requirements and build sequence before implementation begins.
+
+Agent City will be a local macOS desktop application for your M2 Max MacBook Pro. Its persistent city will represent real backend agents, their work, messages, and saved knowledge. It will include a compact desktop overlay and an expanded command view, with the approved Cyberpunk and Solo Leveling visual treatments.
+
+The city starts with only the mayor as an agent. You remain the Chief, with a separate sanctuary and final authority. You give goals, ask progress questions, and steer work through the mayor. The mayor provisions specialists and additional cities as tasks require, within approved permissions and resource limits. Projects can contain cooperating cities with one lead mayor and shared Results for deliverables.
+
+Residents retain their identities, skills, notes, history, and continuation checkpoints. Retirement preserves their records; mergers preserve source identities and lineage. Houses expose current work first, with skills and memory on demand. Roads represent permitted communication, and couriers reflect actual messages. Useful message traffic can develop roads visually. Idle time causes no inference calls, decay, or forced retirement.
+
+The first usable release must support real local execution with already installed compatible models, including an offline mayor. Auto resource selection will use compatible available providers within existing limits, preserve work across disconnections, and fall back to local execution when feasible. Local only will exclude hosted inference. Missing capabilities or network-dependent inputs will appear as explicit blockers. Codex is the initial hosted integration candidate, subject to installed-version compatibility checks. No model downloads are planned without a specific need and authorization.
+
+The mayor will assign compatible approved skills from configured local folders and retain their versions. Skill assignment will not grant additional permissions. A single Decisions list will present necessary Accept/Deny requests. Pause will interrupt supported work and prevent new dispatch; Continue will use saved context rather than promise exact process freezing. Final deliverables require your acceptance. You can directly replace the mayor.
+
+The implementation defaults are a Rust core, Tauri 2 desktop shell, SQLite storage, and a TypeScript interface with Three.js as the initial renderer. Agent execution and durable state will remain independent of animation, theme, and window visibility. Native resource use and visual quality must be measured on the Mac.
+
+The first implementation milestone is a compiling native application shell with a typed frontend/backend command round trip, a persistent resident identity, one assignable task, and an accurately reported provider connection. Development will include an isolated simulated provider, followed by a real bounded local-model workflow where the installed environment supports it. Provider availability, pause/continue support, and native checks will be recorded with evidence.
+
+Subsequent milestones add durable scheduling and recovery, communication and memory, the approved city visuals connected to real events, native overlay controls, automatic provider selection and offline fallback, packaging, and lifecycle expansion. The initial milestone is the foundation, not a claim that the full release is complete.
+
+Agent-initiated mayor voting and a read-only phone companion remain future work. Manual mayor replacement, task-driven staffing, cooperating cities, preserved history, and offline execution remain requirements. The existing browser prototype currently simulates work and resets its state on reload; those limitations must be replaced by the production backend.
+
+This summary follows docs/reference/MASTER-SPEC.md and the recorded owner clarifications. Implementation is authorized, with this email requested before building starts.

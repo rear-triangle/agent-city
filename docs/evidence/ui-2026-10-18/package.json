@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "builtAtUtc": "2026-10-18T14:32:02.973659+00:00",
+  "architecture": "arm64",
+  "bundle": "target/release/bundle/macos/Agent City.app",
+  "archive": "target/release/bundle/Agent City-0.2.0-arm64.zip",
+  "zipBytes": 5290432,
+  "zipSha256": "c29dd541d91c5198e70c7fc915eea6d47ae3e97d2dffebbc90cc0a4d3e2c69e0",
+  "sourceInputs": 121,
+  "sourceInputsSha256": "e117e6cd5f0014a53a260aeb8dd16e324d0444a1fdaedec9f786f30700568f98",
+  "fingerprintFormat": "Sorted path, NUL, SHA-256, newline. Exact entries in source-inputs.json.",
+  "signing": "Local ad hoc signature verified with codesign --verify --deep --strict; not Developer ID signed or notarized.",
+  "checks": {
+    "runtimeTests": 18,
+    "providerProtocolTests": 1,
+    "integrationTests": 13,
+    "format": "passed",
+    "clippy": "passed",
+    "typescript": "passed",
+    "webBuild": "passed",
+    "nativeBuild": "passed",
+    "zipIntegrity": "passed",
+    "finalChange": "Explicit mouse activation focus added after the full suite; final native build reran TypeScript and web build. Browser reproduction passed. Native retest pending."
+  },
+  "releaseAcceptance": "incomplete; unresolved owner-reported AC menu recovery failure, native click-through and further acceptance gates in docs/BUILD-STATUS.md"
+}

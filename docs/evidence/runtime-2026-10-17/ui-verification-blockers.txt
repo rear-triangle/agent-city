@@ -1,0 +1,6 @@
+Final verification attempt, 2026-10-18T03:20:53.258345+00:00
+Native build launched with the isolated release data directory.
+CUA getApp returned: Computer Use server error -10005: cgWindowNotFound
+T3 preview_status and preview_open reported available=true and the expected localhost page.
+After restarting the demo bridge and opening a fresh preview tab, preview_snapshot returned PreviewAutomationExecutionError.
+No final visual, accessibility, focus, display-removal, sleep/wake, or eight-hour acceptance claim is made.

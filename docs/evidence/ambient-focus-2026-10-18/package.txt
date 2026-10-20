@@ -1,0 +1,3 @@
+codesign --verify --deep --strict: valid on disk; satisfies its Designated Requirement
+unzip -tq: No errors detected in compressed data
+SHA-256: ebe87365b51aa6ee6ffd0563a3c7b4f8631716846c9fd1eba9c3a8812008d88d

@@ -1,0 +1,5 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running `target/debug/examples/hosted_control_proof .city-dev/hosted-control-04`
+Pause requested while an exact file write awaited approval.
+First turn ended as interrupted. No file effect occurred.
+Passed: two correlated hosted turns on one thread, acknowledged stop without a write, one resumed approved write, correct file/result evidence, and owner acceptance.

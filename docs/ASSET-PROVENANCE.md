@@ -30,3 +30,11 @@ Revision 6 applies the owner’s font selection to both DOM text and generated b
 Revision 7 reuses the original window artwork and character geometry for compact house menus, a persistent Chief marker, and a static ground ring. The [official Season 2 shadow visuals](https://sololeveling-anime.net/special/shadows-visual/) informed the owner-requested naming roster. Names are display aliases. No official character images, models, or costumes were downloaded or included.
 
 Revision 9 replaces block-shaped character construction with rounded procedural forms and original face and silhouette details. Named-shadow cues are interpretations of the owner’s existing references. No official character model, costume texture, sprite, or image was extracted. Static geometry merges use Three.js BufferGeometryUtils from the existing dependency. SVG portraits remain original code. The character-sheet evidence is a temporary browser render of the actual models, separate from the product UI.
+
+## Native application 0.2.0
+
+The production scene in `src/world` reuses the original procedural scene, character geometry, roads, and local fonts described above. `src/app` supplies the live-runtime controls and theme CSS. The preserved prototype remains separately available at `/prototype/`. No model weights ship in the native bundle. The application icon described below is generated artwork. Default shadow aliases remain part of the theme; custom resident names are displayed in both themes.
+
+### Application icon
+
+The owner requested a custom app icon on October 18, 2026. The built-in image generation tool produced an original miniature city design in navy, cyan, and violet. The transparent [source image](../src-tauri/icons/agent-city-v1/source.png) and [exact prompt](../src-tauri/icons/agent-city-v1/PROMPT.txt) are retained in the repository. Tauri generated the packaged PNG sizes and macOS ICNS. No third-party logo or extracted game art was used. The preceding icon files remain preserved; the bundle configuration explicitly selects the new version.

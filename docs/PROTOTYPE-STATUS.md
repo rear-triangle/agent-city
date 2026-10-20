@@ -1,3 +1,5 @@
+> Historical design-prototype report. The owner subsequently approved building. See [current implementation status](BUILD-STATUS.md) for the native runtime and its verification evidence. The remaining text describes the preserved prototype.
+
 # Agent City prototype status
 
 Revision 9 refines character geometry and makes agent activity the default inspector, with direct Skills and Memory access. Revision 8 adds grab-based map panning, orbit tilt, and a collapsed navigation guide. Revision 7 adds persistent Chief visibility, click-to-teleport travel, compact house menus, and Solo Leveling resident names with Igris as mayor. Revision 6 applies the owner’s typography choices: Friend or Foe Tall BB for Solo Leveling, Rajdhani for primary Cyberpunk text, and Orbitron for secondary metadata. Revision 5 refines the Solo Leveling Player menus and gives the Chief a grander isolated sanctuary with teleport travel. Revision 4 applied the supplied Cyberpunk menu, street, and apartment references. Revision 3 added the Chief, indoor work, intentional trips, scripted speech, and revised anime System menus. Revision 2 addressed the owner's eight criticisms and the request for a system that can evolve or devolve as needed. This remains a design prototype. Production work and every native acceptance gate await approval.
@@ -18,6 +20,8 @@ Revision 9 refines character geometry and makes agent activity the default inspe
 
 ## Runtime and limits
 
+The October 16 [owner-confirmed lifecycle](reference/MASTER-SPEC.md#26-owner-confirmed-city-lifecycle) is the implementation target. The current preview still opens with seven residents and a sample task; newly founded towns also copy that roster. Mayor-only startup, mayor-driven staffing and city founding, mergers, and message-driven road development are not implemented. The owner subsequently deferred agent-initiated leadership votes to future work, outside the current build scope. Manual demand fixtures and retirement controls do not establish those behaviors. This clarification changes requirements only, not the running prototype.
+
 The prototype uses TypeScript, DOM controls, CSS, and Three.js 0.186.1. Vite 8.3.4, TypeScript 7.0.2, and Three.js types 0.186.0 are pinned development dependencies. Three.js is the only runtime library. Four bundled open-font files total about 92 kB. Friend or Foe Tall BB uses the owner’s installed local face; its commercial binary is not redistributed.
 
 Repeated static primitives are instanced. Visible motion is capped at 24 fps in expanded views and 12 fps in the compact view. Indoor work without a cutaway falls back to two-second updates for optional chatter; settled scenes with no chatter stop motion callbacks. Quiet mode stops those animation callbacks. Changes and coarse clock updates can still redraw. Fixed lighting has no periodic renderer clock update. Hidden documents stop rendering callbacks and clock timers.
@@ -26,7 +30,19 @@ Towns, layouts, and notes are actual interactive prototype state. They are not d
 
 The demand buttons replay example workload events. This is not a production automatic staffing policy. They demonstrate the physical response and retained history. The demo does not infer success from animation or grant permissions when capacity grows.
 
+The owner also confirmed compact Accept/Deny decision menus, mayor progress questions and task steering, and mayor selection of approved model/resource profiles. These are requirements, not working backend capabilities in this prototype. Real provider decisions, state-based progress, revised continuations, model selection, and resource admission remain pending.
+
+The project/city distinction is now explicit: one project can have several cooperating cities, with one existing mayor coordinating the common goal. Direct agent inspection, a minimal project picker with Decisions and Results, central deliverable references, and mayor-assigned approved skillsets are required. The current prototype has in-memory towns and compact house menus, but no separate project model, real cross-city coordination, project Results, backend skill assignment, or durable checkpoint continuation.
+
+Compact-first menus must keep primary actions visible while exposing further detail on demand. Delegation requires shared project assignments with one accountable owner and explicit scopes, plus backend dispatch controls. Preserved history must include actionable continuation checkpoints, not just transcripts. These are production requirements; no duplicate-work prevention or durable recovery is established by the simulated scene.
+
+Offline local-model execution is now a core first-release requirement, including a local mayor and real bounded tool execution. Automatic provisioning must choose compatible available profiles using measured capacity, with continuity across connectivity changes. This supersedes the earlier plan to defer local models to M7. The existing Orca native hosting adapter is text-only; no compatible City local agent loop or offline execution test has yet been implemented.
+
+Skill discovery and assignment must use the owner's downloaded local packages and retain usable versions and references. This catalog and dependency validation are pending. A read-only phone progress companion is deferred future work; it would use a reachable local connection or display timestamped cached state until reconnection. No phone synchronization or remote access is implemented or required for the current release.
+
 No Rust core, Tauri shell, SQLite, real provider adapter, durable broker, native overlay, or application-wide resource measurement is implemented. The larger 3D bundle is a deliberate prototype tradeoff for the requested depth. The lightweight target is not considered passed.
+
+Stack confirmation on October 16 found Codex CLI 0.163.0 installed and its experimental app-server command available through a read-only help check. This is availability evidence only. No protocol handshake, agent dispatch, authentication test, tool bridge, approval round trip, interruption, or recovery was exercised. The production frontend default now retains TypeScript DOM controls and CSS rather than requiring React.
 
 ## Milestones
 
@@ -182,7 +198,7 @@ Checked through T3 Code's collaborative browser at 1440 by 900 and 390 by 844.
 
 Saved revision 3 screenshots are in `docs/evidence/`. A browser recording also captures the indoor view, courier, and Chief visit.
 
-The Hamlet transcripts and images establish a resident community with persistent homes, a Chief, message roads, and adaptive staffing. Durable memory, road-to-rail maturity, mergers with retained records, elections with a two-thirds threshold, the former mayor remaining a resident, and production inter-town broker links remain full-build requirements. This prototype does not claim to implement them. Theme changes and layout replanning rebuild the scene and can interrupt an in-flight demo courier. Production message delivery must be independent of scene animation.
+The Hamlet transcripts and images establish a resident community with persistent homes, a Chief, message roads, and adaptive staffing. Durable memory, road-to-rail maturity, mergers with retained records, manual leadership handover with the former mayor remaining a resident, and production inter-town broker links remain full-build requirements. Agent-initiated elections with a two-thirds threshold are future work. This prototype does not claim to implement them. Theme changes and layout replanning rebuild the scene and can interrupt an in-flight demo courier. Production message delivery must be independent of scene animation.
 
 ## Revision 2 browser baseline
 
@@ -304,6 +320,27 @@ Every full-release acceptance gate remains pending. The rows below identify prot
 | AT-68 | Advance and reopen qualifying accepted goals | Demand fixtures expand and consolidate homes and annexes. Retired residents retain notes, identity, and task history. No persistence. |
 | AT-69 | Inspect Solo Leveling controls at compact and expanded sizes | Blue System frames and serif menu typography are present in expanded and compact layouts. Owner visual review pending. |
 | AT-70 | Select the rendering approach | Actual 3D candidate available alongside archived 2.5D source. Native comparison and resource acceptance pending. |
+| AT-71 | Start with only the mayor | Pending. The current scene and new-town fixture create seven residents. |
+| AT-72 | Accept a compact binary decision | Pending full build. Current approvals are simulated. |
+| AT-73 | Deny a request or close its menu | Pending real backend enforcement and decision recovery. |
+| AT-74 | Ask the mayor for progress | Pending. No real mayor or authoritative execution state exists in the prototype. |
+| AT-75 | Steer active work through a provider | Pending real provider interruption and revised continuation. |
+| AT-76 | Select a model/resource profile | Pending catalog, provider readiness, and global capacity admission. |
+| AT-77 | Select an agent or its house | Compact menus exist for the simulated scene. Real activity and result links remain pending. |
+| AT-78 | Coordinate development and marketing cities for one goal | Pending project model, lead mayor assignment, and real inter-city delivery. |
+| AT-79 | Separate projects and preserve deliverable access | Pending durable projects and a shared project Results view. |
+| AT-80 | Assign approved skillsets during provisioning | Pending backend provisioning, skill selection, and capability validation. |
+| AT-81 | Resume a multi-city goal | Pending durable checkpoints, dependencies, and side-effect reconciliation. |
+| AT-82 | Keep ordinary menus compact with primary actions visible | Compact house menus exist; production-wide usability review remains pending. |
+| AT-83 | Prevent duplicate or overlapping assignments across mayors | Pending authoritative project task ownership and dispatch controls. |
+| AT-84 | Continue interrupted work with retained history and partial results | Pending durable checkpoint recording and real provider recovery. |
+| AT-85 | Start and complete a local task without external networking | Pending local mayor, local tool loop, and disconnected execution checks. |
+| AT-86 | Continue feasible work when hosted connectivity drops | Pending provider reconciliation and automatic local fallback. |
+| AT-87 | Preserve source accuracy during offline research | Pending local/cached retrieval and explicit network dependencies. |
+| AT-88 | Adapt provisioning to current capacity and availability | Pending measured admission and compatible profile selection. |
+| AT-89 | Reconnect or enforce Local only | Pending readiness reconciliation and local-only policy enforcement. |
+| AT-90 | Assign downloaded skills offline | Pending local package discovery, version retention, and real provisioning. |
+| AT-91 | Detect unavailable skill dependencies | Pending capability validation and truthful fallback behavior. |
 
 ## Review gate
 

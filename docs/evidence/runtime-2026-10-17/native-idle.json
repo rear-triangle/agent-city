@@ -1,0 +1,10 @@
+{
+  "label": "release-idle-visibility-unverified",
+  "at": "2026-10-18T02:29:02.948624+00:00",
+  "convention": "One logical core is 100 percent. RSS sums every supplied process, including shared pages. Supply the native host, web content, GPU, and networking PIDs. Display state must be independently verified.",
+  "durationSeconds": 600.0799260000058,
+  "meanCpuPercent": 0.0831232384315063,
+  "peakCpuPercent": 0.48577454778669554,
+  "meanRssMiB": 198.36039518900344,
+  "peakRssMiB": 254.6875
+}

@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "builtAtUtc": "2026-10-18T15:07:07.778599+00:00",
+  "architecture": "arm64",
+  "bundle": "target/release/bundle/macos/Agent City.app",
+  "archive": "target/release/bundle/Agent City-0.2.0-arm64.zip",
+  "zipBytes": 7151571,
+  "zipSha256": "68ecec4303624c75d6cfea64e8dee48038501b3fb7fe02fa1c7d212ba9533d1e",
+  "sourceInputs": 127,
+  "sourceInputsSha256": "5ef3ff4a76cdba053f8c04a64ed00fc3068d2ef44e80da517634a326e74ec2a4",
+  "fingerprintFormat": "Sorted path, NUL, SHA-256, newline. Exact entries in source-inputs.json.",
+  "signing": "Local ad hoc signature verified; not Developer ID signed or notarized.",
+  "checks": {
+    "typescript": "passed",
+    "webBuild": "passed",
+    "nativeBuild": "passed",
+    "zipIntegrity": "passed",
+    "packagedIcon": "CFBundleIconFile resolves to the exact new ICNS bytes",
+    "nativeAppearance": "new city icon observed in About Agent City after relaunch",
+    "runtimeTests": "32 passed on preceding code build; not rerun for this icon-only change"
+  },
+  "releaseAcceptance": "incomplete; see docs/BUILD-STATUS.md"
+}
